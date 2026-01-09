@@ -447,7 +447,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
             <div className="flex flex-col items-center gap-3">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-500"></div>
               <p className="text-sm text-gray-400">
-                {language === 'ta' ? 'ஏற்றுகிறது...' : 'Loading...'}
+                {language === 'ta' ? 'இறங்குகிறது...' : 'Loading...'}
               </p>
             </div>
           </div>
