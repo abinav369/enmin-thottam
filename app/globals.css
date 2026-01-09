@@ -37,6 +37,12 @@ body {
   }
 }
 
+@media (min-width: 768px) {
+  body {
+    font-size: 1.05rem;
+  }
+}
+
 /* Ensure Tamil text renders properly */
 * {
   font-feature-settings: "kern" 1;

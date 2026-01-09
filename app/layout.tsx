@@ -17,7 +17,7 @@ export default async function RootLayout({
   const initialLanguage = (cookieStore.get('language')?.value as 'ta' | 'en') || 'ta';
 
   return (
-    <html lang="ta" suppressHydrationWarning>
+    <html lang="initialLanguage" suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{

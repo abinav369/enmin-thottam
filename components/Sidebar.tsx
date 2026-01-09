@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { ContentItem } from "@/lib/getContent";
@@ -103,6 +103,7 @@ function RenderItems({
 }
 
 export default function Sidebar({ data, initialLanguage = 'ta', children }: SidebarProps) {
+  const router = useRouter();
   const pathname = usePathname();
   const { language, setLanguage, theme, setTheme, t } = useLanguage();
   const [open, setOpen] = useState(true);
@@ -234,8 +235,8 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
           ${open ? "w-80 p-4" : "w-0 p-0 overflow-hidden"}
         `}
         style={{ 
-          background: 'var(--bg-sidebar)', 
-          borderRight: '1px solid var(--border)'
+          background: '#121212', 
+          borderRight: '1px solid #27272a'
         }}
       >
         {/* Close button */}        
@@ -261,7 +262,13 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
               {/* Language and Theme Buttons */}
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => setLanguage(language === 'ta' ? 'en' : 'ta')}
+                  onClick={() => {
+                    const newLang = language === 'ta' ? 'en' : 'ta';
+                    setLanguage(newLang);
+                    // Update the cookie manually here if not handled in the Context
+                    document.cookie = `language=${newLang}; path=/; max-age=31536000`;
+                    router.refresh(); 
+                  }}
                   className="cursor-pointer text-sm px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <span>🌐</span>

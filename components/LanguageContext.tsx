@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Language = 'ta' | 'en';
 type Theme = 'dark' | 'light';
@@ -49,6 +50,7 @@ const translations = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children, initialLanguage }: { children: React.ReactNode; initialLanguage?: 'ta' | 'en' }) {
+  const router = useRouter();
   const [language, setLanguageState] = useState<Language>(initialLanguage || 'ta');
   const [theme, setThemeState] = useState<Theme>('dark');
   const [mounted, setMounted] = useState(false);
@@ -113,10 +115,11 @@ export function LanguageProvider({ children, initialLanguage }: { children: Reac
   const setLanguage = (lang: Language) => {
     console.log('Setting language to:', lang);
     setLanguageState(lang);
+
     if (mounted) {
       localStorage.setItem('language', lang);
       document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`;
-      console.log('Language cookie set:', document.cookie);
+      router.refresh(); 
     }
   };
 
