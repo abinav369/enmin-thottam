@@ -11,9 +11,9 @@ export default async function Home() {
     const result = await getFileContent(["intro", "intro"], language);
 
     return (
-      <main className="p-10">
+      <div className="w-full">
         <ContentWrapper result={result} language={language} />
-      </main>
+      </div>
     );
   } catch (error) {
     return (

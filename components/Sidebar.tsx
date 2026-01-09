@@ -231,8 +231,12 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       {/* SIDEBAR */}
       <aside
         className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto
-          ${open ? "w-80 p-4 bg-[#121212]" : "w-0 p-0 overflow-hidden"}
+          ${open ? "w-80 p-4" : "w-0 p-0 overflow-hidden"}
         `}
+        style={{ 
+          background: 'var(--bg-sidebar)', 
+          borderRight: '1px solid var(--border)'
+        }}
       >
         {/* Close button */}        
         {open && (
@@ -389,11 +393,18 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       )}
 
       <main
-        className={`transition-all duration-300 ease-in-out w-full p-6 ${
-          open ? "ml-80" : "ml-0"
-        }`}
+        className={`transition-all duration-300 ease-in-out w-full flex justify-center
+          ${open ? "pl-80" : "pl-0"} 
+        `}
+        style={{ background: 'var(--bg-main)' }}
       >
-        {children}
+        <div 
+          className={`w-full max-w-4xl transition-all duration-300
+            md:p-10
+          `}
+        >
+          {children}
+        </div>
       </main>
     </div>
   );
