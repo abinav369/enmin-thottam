@@ -454,7 +454,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         )}
         
         <div 
-          className={`w-full max-w-4xl transition-all duration-300 md:p-10
+          className={`w-full max-w-4xl transition-all duration-300 md:p-10 px-7
             ${isPending ? "opacity-30 pointer-events-none" : "opacity-100"}
           `}
         >
