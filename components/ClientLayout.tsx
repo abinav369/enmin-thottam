@@ -16,8 +16,9 @@ type ClientLayoutProps = {
 export function ClientLayout({ data, initialLanguage, children }: ClientLayoutProps) {
   return (
     <LanguageProvider initialLanguage={initialLanguage}>
-      <Sidebar data={data} initialLanguage={initialLanguage} />
-      <main className="flex-1 p-8 overflow-y-auto">{children}</main>
+      <Sidebar data={data} initialLanguage={initialLanguage}>
+        {children}
+      </Sidebar>
     </LanguageProvider>
   );
 }

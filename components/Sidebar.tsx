@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useTransition } from "react";
 import Link from "next/link";
 import type { ContentItem } from "@/lib/getContent";
 import { useLanguage } from "./LanguageContext";
@@ -23,7 +23,8 @@ function RenderItems({
   openFolders,
   toggleFolder,
   initialLanguage,
-  mounted
+  mounted,
+  onNavigate
 }: { 
   items: ContentItem[]; 
   basePath: string; 
@@ -32,6 +33,7 @@ function RenderItems({
   toggleFolder: (path: string) => void;
   initialLanguage: 'ta' | 'en';
   mounted: boolean;
+  onNavigate: (href: string) => void;
 }) {
   return (
     <ul className="ml-4 mt-1 space-y-1 relative">
@@ -51,6 +53,10 @@ function RenderItems({
 
               <Link
                 href={href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate(href);
+                }}
                 className={`block pl-3 ${
                   isActive
                     ? "text-[#00FFFF] font-semibold"
@@ -92,6 +98,7 @@ function RenderItems({
                   toggleFolder={toggleFolder}
                   initialLanguage={initialLanguage}
                   mounted={mounted}
+                  onNavigate={onNavigate}
                 />
               </details>
             </li>
@@ -108,6 +115,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   const { language, setLanguage, theme, setTheme, t } = useLanguage();
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     setMounted(true);
@@ -116,12 +124,10 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   const activeCategory = useMemo(() => {
     const parts = pathname.split('/').filter(p => p.length > 0);
     const category = parts.length > 0 ? decodeURIComponent(parts[0]) : '';
-    console.log('Active category:', category, 'from pathname:', pathname);
     return category;
   }, [pathname]);
 
   const [openFolders, setOpenFolders] = useState<Set<string>>(() => {
-    // Initialize with current path's folders
     const parts = pathname.split('/').filter(p => p.length > 0);
     const folders = new Set<string>();
     let current = "";
@@ -131,13 +137,23 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     }
     return folders;
   });
+  
   const [openCategories, setOpenCategories] = useState<Set<string>>(() => {
     const parts = pathname.split('/').filter(p => p.length > 0);
     const category = parts.length > 0 ? decodeURIComponent(parts[0]) : '';
     return category ? new Set([category]) : new Set();
   });
 
-  // Only update folders when navigating to a new path, not on every render
+  useEffect(() => {
+    if (activeCategory && activeCategory !== 'intro' && activeCategory !== 'history') {
+      setOpenCategories((prev) => {
+        const newSet = new Set(prev);
+        newSet.add(activeCategory);
+        return newSet;
+      });
+    }
+  }, [activeCategory]);
+
   const prevPathnameRef = useRef(pathname);
   
   useEffect(() => {
@@ -164,7 +180,6 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     }
   }, [pathname]);
 
-  
   const allFolderPaths = useMemo(() => {
     const paths = new Set<string>();
     const gatherPaths = (items: ContentItem[], basePath: string) => {
@@ -177,7 +192,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       });
     };
     data.forEach((cat) => {
-      if (cat.category !== "intro") {
+      if (cat.category !== "intro" && cat.category !== "history") {
         gatherPaths(cat.items, `/${cat.category}`);
       }
     });
@@ -217,15 +232,34 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     setOpenFolders(new Set(allFolderPaths)); 
     const allCats = new Set<string>();
     data.forEach(cat => {
-      if (cat.category !== "intro") {
+      if (cat.category !== "intro" && cat.category !== "history") {
         allCats.add(cat.category);
       }
     });
     setOpenCategories(allCats);
   };
 
+  const handleLanguageChange = () => {
+    const newLang = language === 'ta' ? 'en' : 'ta';
+    setLanguage(newLang);
+    document.cookie = `language=${newLang}; path=/; max-age=31536000`;
+    
+    startTransition(() => {
+      router.refresh();
+    });
+  };
+
+  // Wrapper for navigation to show loading state
+  const handleNavigation = (href: string) => {
+    if (decodeURIComponent(pathname) === href) return;
+    
+    startTransition(() => {
+      router.push(href);
+    });
+  };
+
   const allExpanded = openFolders.size === allFolderPaths.size && 
-                      openCategories.size === data.filter(c => c.category !== "intro").length;
+                      openCategories.size === data.filter(c => c.category !== "intro" && c.category !== "history").length;
 
   return (
     <div className="flex min-h-screen relative transition-colors" style={{ background: 'var(--bg-main)', color: 'var(--text-main)' }}>
@@ -239,7 +273,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
           borderRight: '1px solid #27272a'
         }}
       >
-        {/* Close button */}        
+        {/* Close button */}
         {open && (
           <button
             onClick={() => setOpen(false)}
@@ -254,22 +288,15 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         {open && (
           <>
             <div className="mb-6 space-y-4">
-              {/* Author Name */}
               <h1 className="text-2xl font-bold text-center" style={{ color: '#C4A484' }}>
                 {language === 'ta' ? 'அபிநவ் ந ர' : 'Abinav N R'}
               </h1>
               
-              {/* Language and Theme Buttons */}
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  onClick={() => {
-                    const newLang = language === 'ta' ? 'en' : 'ta';
-                    setLanguage(newLang);
-                    // Update the cookie manually here if not handled in the Context
-                    document.cookie = `language=${newLang}; path=/; max-age=31536000`;
-                    router.refresh(); 
-                  }}
-                  className="cursor-pointer text-sm px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
+                  onClick={handleLanguageChange}
+                  disabled={isPending}
+                  className="cursor-pointer text-sm px-3 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <span>🌐</span>
                   <span>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
@@ -285,13 +312,11 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
 
               <div className="my-4 h-px w-full bg-linear-to-r from-transparent via-gray-500 to-transparent" />
 
-              {/* Contents Label */}
               <div className="flex items-end justify-between">
                 <h2 className="text-2xl font-semibold" style={{ color: "#00FFFF" }}>
                   {language === 'ta' ? 'பொருளடக்கம்' : 'Contents'}
                 </h2>
 
-                {/* Expand/Collapse Button */}
                 <button
                   onClick={allExpanded ? collapseAll : expandAll}
                   className="cursor-pointer text-sm px-2 py-2 text-gray-300 hover:text-white underline-offset-7 hover:underline transition-colors"
@@ -305,6 +330,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                 </button>
               </div>
             </div>
+            
             <ul>
               {data.map((cat) => {
                 const isIntro = cat.category === "intro";
@@ -318,6 +344,10 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                     <li key="intro" className="mb-4">
                       <Link
                         href="/"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleNavigation("/");
+                        }}
                         className={`block text-lg ${
                           isActive 
                             ? "text-[#C4A484] font-semibold" 
@@ -339,6 +369,10 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                     <li key="history" className="mb-4">
                       <Link
                         href="/history"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleNavigation("/history");
+                        }}
                         className={`block text-lg ${
                           isActive 
                             ? "text-[#C4A484] font-semibold" 
@@ -377,6 +411,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                         toggleFolder={toggleFolder}
                         initialLanguage={initialLanguage}
                         mounted={mounted}
+                        onNavigate={handleNavigation}
                       />
                     </details>
                   </li>
@@ -387,6 +422,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         )}
       </aside>
 
+      {/* Open Button */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
@@ -405,9 +441,21 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         `}
         style={{ background: 'var(--bg-main)' }}
       >
+        {/* LOADER */}
+        {isPending && (
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-500"></div>
+              <p className="text-sm text-gray-400">
+                {language === 'ta' ? 'ஏற்றுகிறது...' : 'Loading...'}
+              </p>
+            </div>
+          </div>
+        )}
+        
         <div 
-          className={`w-full max-w-4xl transition-all duration-300
-            md:p-10
+          className={`w-full max-w-4xl transition-all duration-300 md:p-10
+            ${isPending ? "opacity-30 pointer-events-none" : "opacity-100"}
           `}
         >
           {children}
