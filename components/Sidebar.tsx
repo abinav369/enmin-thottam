@@ -296,10 +296,10 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                 <button
                   onClick={handleLanguageChange}
                   disabled={isPending}
-                  className="cursor-pointer text-sm px-3 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
+                  className="cursor-pointer text-sm px-3 py-2 bg-[#00ffff] hover:bg-[#00cccc] disabled:bg-[#00c0c0] disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  <span>🌐</span>
-                  <span>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
+                  <span className = "" style={{ color: '#000000' }}>🌐</span>
+                  <span className = "" style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
                 </button>
                 
                 <button
