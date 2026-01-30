@@ -265,7 +265,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     <div className="flex min-h-screen relative transition-colors" style={{ background: 'var(--bg-main)', color: 'var(--text-main)' }}>
       {/* SIDEBAR */}
       <aside
-        className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto
+        className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto z-40
           ${open ? "w-80 p-4" : "w-0 p-0 overflow-hidden"}
         `}
         style={{ 
@@ -435,11 +435,14 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         </button>
       )}
 
+      {/* PARENT BOX - Fixed position, unaffected by sidebar */}
       <main
-        className={`transition-all duration-300 ease-in-out w-full flex justify-center
-          ${open ? "pl-80" : "pl-0"} 
-        `}
-        style={{ background: 'var(--bg-main)' }}
+        className="fixed top-0 right-0 bottom-0 overflow-y-auto"
+        style={{ 
+          background: 'var(--bg-main)',
+          left: open ? '320px' : '0px',
+          transition: 'left 300ms ease-in-out'
+        }}
       >
         {/* LOADER */}
         {isPending && (
@@ -453,8 +456,9 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
           </div>
         )}
         
+        {/* CONTENT - Centered within parent box */}
         <div 
-          className={`w-full max-w-4xl transition-all duration-300 md:p-10 px-7
+          className={`w-full max-w-7xl mx-auto md:p-10 px-7 transition-all duration-300
             ${isPending ? "opacity-30 pointer-events-none" : "opacity-100"}
           `}
         >
