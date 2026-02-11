@@ -17,7 +17,7 @@
   --bg-sidebar: #121212;
   --text-main: #ededed;
   --text-muted: #94a3b8;
-  --text-bold: #00cccc;
+  --text-bold: #00ffff;
   --border: #27272a;
 }
 
@@ -142,7 +142,7 @@ body {
 }
 
 .prose strong {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-bold);
 }
 
