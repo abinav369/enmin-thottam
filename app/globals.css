@@ -7,6 +7,7 @@
   --bg-sidebar: #f8f8f8;
   --text-main: #171717;
   --text-muted: #64748b;
+  --text-bold: #b91c1c;
   --border: #e5e5e5;
 }
 
@@ -16,6 +17,7 @@
   --bg-sidebar: #121212;
   --text-main: #ededed;
   --text-muted: #94a3b8;
+  --text-bold: #00cccc;
   --border: #27272a;
 }
 
@@ -140,7 +142,8 @@ body {
 }
 
 .prose strong {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--text-bold);
 }
 
 .prose code {

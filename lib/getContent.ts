@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
+import ThamizhVerse from "@/components/mdx/ThamizhVerse";
 
 const contentsDir = path.join(process.cwd(), "contents");
 
@@ -213,6 +214,9 @@ export async function getFileContent(
 
     const { content } = await compileMDX({
         source: fileContent,
+        components: {
+            ThamizhVerse,
+        },
         options: {
             parseFrontmatter: true,
             mdxOptions: {
