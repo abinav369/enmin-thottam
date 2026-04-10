@@ -71,48 +71,49 @@ body {
 */
 
 .prose h1 {
-  font-size: 2em;       /* Was 2.25em */
+  font-size: 1.6em;       /* Blog title size (balanced) */
   font-weight: 700;
-  margin-top: 1.5em;    /* Was 2em */
-  margin-bottom: 0.8em; /* Was 1em */
-  line-height: 1.2;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  line-height: 1.25;
 }
 
 .prose h2 {
-  font-size: 1.6em;     /* Was 1.875em */
+  font-size: 1.4em;
   font-weight: 600;
-  margin-top: 1.4em;    /* Was 1.75em */
-  margin-bottom: 0.75em;/* Was 0.875em */
+  margin-top: 1.3em;
+  margin-bottom: 0.6em;
   line-height: 1.3;
 }
 
 .prose h3 {
-  font-size: 1.35em;    /* Was 1.5em */
+  font-size: 1.25em;
   font-weight: 600;
-  margin-top: 1.25em;   /* Was 1.5em */
-  margin-bottom: 0.6em; /* Was 0.75em */
-  line-height: 1.4;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.35;
 }
 
 .prose h4 {
-  font-size: 1.15em;    /* Was 1.25em */
+  font-size: 1.15em;
   font-weight: 600;
   margin-top: 1.1em;
   margin-bottom: 0.5em;
 }
 
 .prose h5 {
-  font-size: 1.05em;    /* Was 1.125em */
+  font-size: 1.05em;
   font-weight: 600;
   margin-top: 1em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.4em;
 }
 
 .prose h6 {
   font-size: 1em;
   font-weight: 600;
   margin-top: 1em;
-  margin-bottom: 0.5em;
+  margin-bottom: 0.4em;
+  opacity: 0.9;
 }
 
 .prose p {

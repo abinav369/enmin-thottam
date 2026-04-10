@@ -2,7 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkGfm from 'remark-gfm';
+import readingTime from "reading-time";
 import ThamizhVerse from "@/components/mdx/ThamizhVerse";
+import Quote from "@/components/mdx/QuoteBox";
 
 const contentsDir = path.join(process.cwd(), "contents");
 
@@ -212,10 +214,13 @@ export async function getFileContent(
     
     const fileContent = fs.readFileSync(filePath, "utf-8");
 
-    const { content } = await compileMDX({
+    const stats = readingTime(fileContent);
+
+    const { content, frontmatter } = await compileMDX({
         source: fileContent,
         components: {
             ThamizhVerse,
+            Quote
         },
         options: {
             parseFrontmatter: true,
@@ -225,5 +230,9 @@ export async function getFileContent(
         },
     });
     
-    return { content };
+    return { 
+        content,
+        frontmatter,
+        readingTime: stats.text
+    };
 }

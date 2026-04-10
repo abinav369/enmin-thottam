@@ -1,5 +1,6 @@
 "use client";
 
+import { Globe, Moon, Sun } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useRef, useTransition } from "react";
 import Link from "next/link";
@@ -288,8 +289,8 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         {open && (
           <>
             <div className="mb-6 space-y-4">
-              <h1 className="text-2xl font-bold text-center" style={{ color: '#C4A484' }}>
-                {language === 'ta' ? 'அபிநவ் ந ர' : 'Abinav N R'}
+              <h1 className="text-5xl font-bold text-center" style={{ color: '#C4A484' }}>
+                {language === 'ta' ? 'அன்பு' : 'Anbu'}
               </h1>
               
               <div className="grid grid-cols-2 gap-2">
@@ -306,7 +307,12 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                   className="cursor-pointer text-sm px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  <span>{theme === 'dark' ? '☀️' : '🌙'}</span>
+                  {theme === 'dark' ? (
+                    <Sun className="w-4 h-4" />
+                  ) : (
+                    <Moon className="w-4 h-4" />
+                  )}
+
                 </button>
               </div>
 

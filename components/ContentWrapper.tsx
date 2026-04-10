@@ -3,9 +3,14 @@
 import { useLanguage } from "./LanguageContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import BlogHeader  from "@/components/BlogHeader"
 
 type ContentWrapperProps = {
-  result: { content: React.ReactElement };
+  result: { 
+    content: React.ReactElement;
+    frontmatter: any;
+    readingTime: string;
+  };
   language: 'ta' | 'en';
 };
 
@@ -25,6 +30,14 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
 
   return (
     <article className="prose prose-invert prose-headings:text-gray-100 prose-p:text-gray-300 prose-a:text-blue-400 prose-strong:text-gray-100 prose-code:text-gray-300 max-w-none">
+      <BlogHeader
+        aumAmma={result.frontmatter.aumAmma}
+        title={result.frontmatter.title}
+        publishedAt={result.frontmatter.publishedAt}
+        updatedAt={result.frontmatter.updatedAt}
+        readingTime={result.readingTime}
+        language={serverLanguage}
+     />
       {result.content}
     </article>
   );
