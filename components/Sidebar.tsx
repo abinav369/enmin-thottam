@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, Moon, Sun } from "lucide-react";
+import { Globe, Moon, Sun, ChevronRight } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useRef, useTransition } from "react";
 import Link from "next/link";
@@ -199,10 +199,10 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     });
     return paths;
   }, [data]);
-  
+
 //********************************************
 // Swiping to open close side bar in mobile **
-// ******************************************* 
+
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   useEffect(() => {
@@ -230,6 +230,9 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [open]);
+
+//                   End                    **
+// ******************************************* 
 
   const toggleFolder = (path: string) => {
     setOpenFolders((prev) => {
@@ -309,7 +312,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         {open && (
           <button
             onClick={() => setOpen(false)}
-            className="cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 z-50 p-2 bg-gray-800 text-white rounded-l-md hover:bg-gray-700 transition-colors"
+            className="cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 z-50 px-1.5 py-8 rounded-l-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-2.5 transition-all duration-300"
             title={mounted ? t('closeSidebar') : 'Close sidebar'}
             aria-label={mounted ? t('closeSidebar') : 'Close sidebar'}
           >
@@ -320,9 +323,17 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         {open && (
           <>
             <div className="mb-6 space-y-4">
-              <h1 className="text-5xl font-bold text-center" style={{ color: '#C4A484' }}>
+              <Link
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleNavigation("/");
+                }}
+                className="block text-5xl font-bold text-center cursor-pointer"
+                style={{ color: '#C4A484' }}
+              >
                 {language === 'ta' ? 'அன்பு' : 'Anbu'}
-              </h1>
+              </Link>
               
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -330,7 +341,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                   disabled={isPending}
                   className="cursor-pointer text-sm px-3 py-2 bg-[#00ffff] hover:bg-[#00cccc] disabled:bg-[#00c0c0] disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  <span className = "" style={{ color: '#000000' }}>🌐</span>
+                  <Globe className="w-5 h-5" style={{ color: '#000000' }} />
                   <span className = "" style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
                 </button>
                 
@@ -339,9 +350,9 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                   className="cursor-pointer text-sm px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   {theme === 'dark' ? (
-                    <Sun className="w-4 h-4" />
+                    <Sun className="w-5 h-5" />
                   ) : (
-                    <Moon className="w-4 h-4" />
+                    <Moon className="w-5 h-5" />
                   )}
 
                 </button>
@@ -353,15 +364,18 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                 <h2 className="text-2xl font-semibold" style={{ color: "#00FFFF" }}>
                   {language === 'ta' ? 'பொருளடக்கம்' : 'Contents'}
                 </h2>
-
+ 
                 <button
                   onClick={allExpanded ? collapseAll : expandAll}
-                  className="cursor-pointer text-sm px-2 py-2 text-gray-300 hover:text-white underline-offset-7 hover:underline transition-colors"
+                  className="cursor-pointer text-sm px-2 py-2 text-gray-300 hover:text-white underline-offset-7 hover:underline transition-colors flex items-center gap-1"
                 >
+                  <ChevronRight
+                    className={`w-4 h-4 ${allExpanded ? 'rotate-90' : ''}`}
+                  />
                   <span>
-                    {allExpanded 
-                      ? (language === 'ta' ? '▼ மூடு' : '▼ Collapse')
-                      : (language === 'ta' ? '▶ விரி' : '▶ Expand')
+                    {allExpanded
+                      ? (language === 'ta' ? 'மூடு' : 'Collapse')
+                      : (language === 'ta' ? 'விரி' : 'Expand')
                     }
                   </span>
                 </button>
@@ -463,7 +477,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="cursor-pointer fixed top-1/2 left-0 -translate-y-1/2 z-50 p-2 bg-gray-800 text-white rounded-r-md hover:bg-gray-700 transition-all duration-300"
+          className="cursor-pointer fixed top-1/2 left-0 -translate-y-1/2 z-50 px-1.5 py-8 md:px-2 md:py-10 rounded-r-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-3 transition-all duration-300"
           title={mounted ? t('openSidebar') : 'Open sidebar'}
           aria-label={mounted ? t('openSidebar') : 'Open sidebar'}
           suppressHydrationWarning
