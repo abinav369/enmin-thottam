@@ -199,6 +199,37 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     });
     return paths;
   }, [data]);
+  
+//********************************************
+// Swiping to open close side bar in mobile **
+// ******************************************* 
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+
+      // Ignore if mostly a vertical scroll
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+
+      if (deltaX > 60 && !open) setOpen(true);   // swipe right → open
+      if (deltaX < -60 && open) setOpen(false);  // swipe left → close
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, { passive: true });
+    document.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [open]);
 
   const toggleFolder = (path: string) => {
     setOpenFolders((prev) => {
