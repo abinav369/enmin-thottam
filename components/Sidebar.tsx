@@ -341,7 +341,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                   disabled={isPending}
                   className="cursor-pointer text-sm px-3 py-2 bg-[#00ffff] hover:bg-[#00cccc] disabled:bg-[#00c0c0] disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
-                  <Globe className="w-5 h-5" style={{ color: '#000000' }} />
+                  <Globe className="w-4 h-4" style={{ color: '#000000' }} />
                   <span className = "" style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
                 </button>
                 
@@ -350,9 +350,9 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                   className="cursor-pointer text-sm px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   {theme === 'dark' ? (
-                    <Sun className="w-5 h-5" />
+                    <Sun className="w-4 h-4" />
                   ) : (
-                    <Moon className="w-5 h-5" />
+                    <Moon className="w-4 h-4" />
                   )}
 
                 </button>
@@ -431,7 +431,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                         }`}
                       >
                         <span suppressHydrationWarning>
-                          {initialLanguage === 'ta' ? 'வரலாறு' : 'History'}
+                          {initialLanguage === 'ta' ? 'காலச்சுவடு' : 'Updates'}
                         </span>
                       </Link>
                     </li>

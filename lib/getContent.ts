@@ -236,3 +236,82 @@ export async function getFileContent(
         readingTime: stats.text
     };
 }
+
+// *************************************
+// **  Getting contents for history   **
+
+export type ContentMeta = {
+  title: string;
+  updatedAt: string;
+  publishedAt: string;       // display value
+  sortKey: string;           // .en.mdx updatedAt for sorting
+  publishedSortKey: string;  // .en.mdx publishedAt for sorting
+  href: string;
+};
+
+export async function getAllContentMeta(language: 'ta' | 'en' = 'ta'): Promise<ContentMeta[]> {
+  const results: ContentMeta[] = [];
+
+    function extractFrontmatter(filePath: string): Record<string, string> {
+      const raw = fs.readFileSync(filePath, 'utf-8');
+      const match = raw.match(/^---\n([\s\S]*?)\n---/);
+      if (!match) return {};
+      const fm: Record<string, string> = {};
+      for (const line of match[1].split('\n')) {
+        const colonIdx = line.indexOf(':');
+        if (colonIdx === -1) continue;
+        const key = line.slice(0, colonIdx).trim();
+        const value = line.slice(colonIdx + 1).trim().replace(/^["']|["']$/g, '');
+        if (key) fm[key] = value;
+      }
+      return fm;
+    }
+
+  function walkItems(items: ContentItem[], basePath: string) {
+    for (const item of items) {
+      if (item.type === 'folder') {
+        walkItems(item.children, `${basePath}/${item.path}`);
+      } else {
+        const absBase = path.join(contentsDir, ...basePath.split('/').filter(Boolean), item.path);
+
+        // Always use .en.mdx for sorting
+        const enPath = `${absBase}.en.mdx`;
+        if (!fs.existsSync(enPath)) continue;
+
+        const enFm = extractFrontmatter(enPath);
+        if (!enFm.title || !enFm.updatedAt) continue;
+
+        // For display, use language-specific file if it exists, else fall back to .en.mdx
+        const langPath = language === 'en' ? enPath : `${absBase}.${language}.mdx`;
+        const displayFm = fs.existsSync(langPath)
+          ? extractFrontmatter(langPath)
+          : enFm;
+
+        results.push({
+          title: displayFm.title || enFm.title,
+          updatedAt: displayFm.updatedAt || enFm.updatedAt,
+          publishedAt: displayFm.publishedAt || enFm.publishedAt,
+          sortKey: enFm.updatedAt,
+          publishedSortKey: enFm.publishedAt,
+          href: `${basePath}/${item.path}`,
+        });
+      }
+    }
+  }
+
+  const categories = getCategoriesAndfiles();
+  for (const cat of categories) {
+    if (cat.category === 'intro' || cat.category === 'history') continue;
+    walkItems(cat.items, `/${cat.category}`);
+  }
+
+  // Sort is always by .en.mdx updatedAt — but we don't have it separately anymore.
+  // Re-read en updatedAt for sort key:
+  return results.sort((a, b) =>
+    new Date(b.sortKey).getTime() - new Date(a.sortKey).getTime()
+  );
+}
+
+
+// end of getting details for history **
+// *************************************
