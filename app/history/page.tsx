@@ -19,7 +19,7 @@ export default async function HistoryPage() {
 
   return (
     <article className="prose prose-invert prose-headings:text-gray-100 prose-p:text-gray-300 prose-a:text-blue-400 prose-strong:text-gray-100 prose-code:text-gray-300 max-w-none">
-      <p className="text-center text-base tracking-wide font-bold italic opacity-80 mt-3! md:mt-0! lg:mt-0!">
+      <p className="text-center text-base text-emerald-400! tracking-wide font-bold italic opacity-80 mt-3! md:mt-0! lg:mt-0!">
         {aumAmma}
       </p>
       <HistoryTabs

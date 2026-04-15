@@ -14,7 +14,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
   const [tab, setTab] = useState<'updated' | 'published'>('updated');
 
   const getRelativeTime = (dateStr: string) => {
-    // Always use the English ISO sortKey for relative time calculation
+    
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return null; // return null if unparseable
 
@@ -77,7 +77,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`pb-2 text-lg font-medium transition-colors cursor-pointer ${
+            className={`pb-2 text-base md:text-lg font-medium transition-colors cursor-pointer ${
               tab === t.key
                 ? 'border-b-2 border-[#C4A484] text-[#C4A484]'
                 : 'text-(--text-muted) hover:text-(--text-main)'
@@ -88,7 +88,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
         ))}
       </div>
 
-      <ul className="space-y-3">
+      <ul className="space-y-3 pl-0! ml-0!">
         {entries.map((entry) => {
           const displayDate = tab === 'updated' ? entry.updatedAt : entry.publishedAt;
           const sortDate = tab === 'updated' ? entry.sortKey : entry.publishedSortKey;

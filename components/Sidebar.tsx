@@ -383,60 +383,30 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
             </div>
             
             <ul>
+              <li className="mb-4">
+    <Link
+      href="/"
+      onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
+      className={`block text-lg ${pathname === "/" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+    >
+      {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
+    </Link>
+  </li>
+  <li className="mb-4">
+    <Link
+      href="/history"
+      onClick={(e) => { e.preventDefault(); handleNavigation("/history"); }}
+      className={`block text-lg ${pathname === "/history" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+    >
+      {initialLanguage === 'ta' ? 'வரலாறு' : 'History'}
+    </Link>
+  </li>
               {data.map((cat) => {
-                const isIntro = cat.category === "intro";
-                const isHistory = cat.category === "history";
+                //const isIntro = cat.category === "intro";
+                //const isHistory = cat.category === "history";
                 const categoryDisplayName = cat.displayName?.[initialLanguage] || cat.category;
 
-                if (isIntro) {
-                  const isActive = pathname === "/";
-                  
-                  return (
-                    <li key="intro" className="mb-4">
-                      <Link
-                        href="/"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleNavigation("/");
-                        }}
-                        className={`block text-lg ${
-                          isActive 
-                            ? "text-[#C4A484] font-semibold" 
-                            : "text-gray-300 hover:text-[#C4A488]"
-                        }`}
-                      >
-                        <span>
-                          {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                }
-
-                if (isHistory) {
-                  const isActive = pathname === "/history";
-                  
-                  return (
-                    <li key="history" className="mb-4">
-                      <Link
-                        href="/history"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleNavigation("/history");
-                        }}
-                        className={`block text-lg ${
-                          isActive 
-                            ? "text-[#C4A484] font-semibold" 
-                            : "text-gray-300 hover:text-[#C4A488]"
-                        }`}
-                      >
-                        <span suppressHydrationWarning>
-                          {initialLanguage === 'ta' ? 'காலச்சுவடு' : 'Updates'}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                }
+                
 
                 const isCategoryOpen = openCategories.has(cat.category);
                 

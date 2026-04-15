@@ -118,6 +118,7 @@ export function getCategoriesAndfiles() {
         .filter((item) => {
             // Filter out translation files and only keep directories
             if (item === '_translations.json') return false;
+            if (item === 'intro') return false;
             const fullPath = path.join(contentsDir, item);
             return fs.statSync(fullPath).isDirectory();
         });
