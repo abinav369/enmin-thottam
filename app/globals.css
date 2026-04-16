@@ -9,6 +9,7 @@
   --text-muted: #64748b;
   --text-bold: #b91c1c;
   --border: #e5e5e5;
+  --sidebar-width: 320px;
 }
 
 /* Dark mode colors */
@@ -66,6 +67,9 @@ body {
 @media (max-width: 767px) {
   aside {
     zoom: 0.9;
+  }
+  :root {
+    --sidebar-width: 288px;  /* 320 * 0.9 */
   }
 }
 

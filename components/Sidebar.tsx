@@ -461,7 +461,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         className="fixed top-0 right-0 bottom-0 overflow-y-auto"
         style={{ 
           background: 'var(--bg-main)',
-          left: open ? '320px' : '0px',
+          left: open ? 'var(--sidebar-width)' : '0px',
           transition: 'left 300ms ease-in-out'
         }}
       >
