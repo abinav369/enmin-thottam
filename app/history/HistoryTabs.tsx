@@ -13,8 +13,15 @@ type Props = {
 export default function HistoryTabs({ updatedEntries, publishedEntries, language }: Props) {
   const [tab, setTab] = useState<'updated' | 'published'>('updated');
 
+  const formatDisplayDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr; // Tamil string, return as-is
+    return new Intl.DateTimeFormat('en-IN', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    }).format(d).replace(',', ','); // gives "11/02/2026, 00:33"
+  };
   const getRelativeTime = (dateStr: string) => {
-    
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return null; // return null if unparseable
 
@@ -105,12 +112,12 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
                   {entry.title}
                 </span>
                 {/* Line 2: date left, relative right */}
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col gap-0.5 md:flex-row md:items-center md:justify-between md:gap-4">
                   <span className="text-sm text-(--text-muted)">
-                    {displayDate}
+                    {formatDisplayDate(displayDate)}
                   </span>
                   {relative && (
-                    <span className="text-sm text-(--text-muted) whitespace-nowrap shrink-0">
+                    <span className="flex flex-col gap-0.5 md:flex-row md:items-center md:justify-between md:gap-4">
                       {relative}
                     </span>
                   )}

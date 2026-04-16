@@ -300,7 +300,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     <div className="flex min-h-screen relative transition-colors" style={{ background: 'var(--bg-main)', color: 'var(--text-main)' }}>
       {/* SIDEBAR */}
       <aside
-        className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto z-40
+        className={`transition-all duration-300 ease-in-out  fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto z-40
           ${open ? "w-80 p-4" : "w-0 p-0 overflow-hidden"}
         `}
         style={{ 
@@ -384,23 +384,23 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
             
             <ul>
               <li className="mb-4">
-    <Link
-      href="/"
-      onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
-      className={`block text-lg ${pathname === "/" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
-    >
-      {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
-    </Link>
-  </li>
-  <li className="mb-4">
-    <Link
-      href="/history"
-      onClick={(e) => { e.preventDefault(); handleNavigation("/history"); }}
-      className={`block text-lg ${pathname === "/history" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
-    >
-      {initialLanguage === 'ta' ? 'வரலாறு' : 'History'}
-    </Link>
-  </li>
+                <Link
+                  href="/"
+                  onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
+                  className={`block text-lg ${pathname === "/" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+                >
+                  {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
+                </Link>
+              </li>
+              <li className="mb-4">
+                <Link
+                  href="/history"
+                  onClick={(e) => { e.preventDefault(); handleNavigation("/history"); }}
+                  className={`block text-lg ${pathname === "/history" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+                >
+                  {initialLanguage === 'ta' ? 'காலச்சுவடு' : 'Updates'}
+                </Link>
+              </li>
               {data.map((cat) => {
                 //const isIntro = cat.category === "intro";
                 //const isHistory = cat.category === "history";

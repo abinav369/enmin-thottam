@@ -63,6 +63,12 @@ body {
   }
 }
 
+@media (max-width: 767px) {
+  aside {
+    zoom: 0.9;
+  }
+}
+
 /* Ensure Tamil text renders properly */
 * {
   font-feature-settings: "kern" 1;

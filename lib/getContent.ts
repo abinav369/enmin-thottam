@@ -253,20 +253,40 @@ export type ContentMeta = {
 export async function getAllContentMeta(language: 'ta' | 'en' = 'ta'): Promise<ContentMeta[]> {
   const results: ContentMeta[] = [];
 
-    function extractFrontmatter(filePath: string): Record<string, string> {
-      const raw = fs.readFileSync(filePath, 'utf-8');
-      const match = raw.match(/^---\n([\s\S]*?)\n---/);
-      if (!match) return {};
-      const fm: Record<string, string> = {};
-      for (const line of match[1].split('\n')) {
-        const colonIdx = line.indexOf(':');
-        if (colonIdx === -1) continue;
-        const key = line.slice(0, colonIdx).trim();
-        const value = line.slice(colonIdx + 1).trim().replace(/^["']|["']$/g, '');
-        if (key) fm[key] = value;
-      }
-      return fm;
+  function extractFrontmatter(filePath: string): Record<string, string> {
+    const raw = fs.readFileSync(filePath, 'utf-8');
+    const match = raw.match(/^---\n([\s\S]*?)\n---/);
+    if (!match) return {};
+    const fm: Record<string, string> = {};
+    for (const line of match[1].split('\n')) {
+      const colonIdx = line.indexOf(':');
+      if (colonIdx === -1) continue;
+      const key = line.slice(0, colonIdx).trim();
+      const value = line.slice(colonIdx + 1).trim().replace(/^["']|["']$/g, '');
+      if (key) fm[key] = value;
     }
+    return fm;
+  }
+
+  function processFile(absBase: string, href: string) {
+    const enPath = `${absBase}.en.mdx`;
+    if (!fs.existsSync(enPath)) return;
+
+    const enFm = extractFrontmatter(enPath);
+    if (!enFm.title || !enFm.updatedAt) return;
+
+    const langPath = language === 'en' ? enPath : `${absBase}.${language}.mdx`;
+    const displayFm = fs.existsSync(langPath) ? extractFrontmatter(langPath) : enFm;
+
+    results.push({
+      title: displayFm.title || enFm.title,
+      updatedAt: displayFm.updatedAt || enFm.updatedAt,
+      publishedAt: displayFm.publishedAt || enFm.publishedAt,
+      sortKey: enFm.updatedAt,
+      publishedSortKey: enFm.publishedAt,
+      href,
+    });
+  }
 
   function walkItems(items: ContentItem[], basePath: string) {
     for (const item of items) {
@@ -274,40 +294,32 @@ export async function getAllContentMeta(language: 'ta' | 'en' = 'ta'): Promise<C
         walkItems(item.children, `${basePath}/${item.path}`);
       } else {
         const absBase = path.join(contentsDir, ...basePath.split('/').filter(Boolean), item.path);
-
-        // Always use .en.mdx for sorting
-        const enPath = `${absBase}.en.mdx`;
-        if (!fs.existsSync(enPath)) continue;
-
-        const enFm = extractFrontmatter(enPath);
-        if (!enFm.title || !enFm.updatedAt) continue;
-
-        // For display, use language-specific file if it exists, else fall back to .en.mdx
-        const langPath = language === 'en' ? enPath : `${absBase}.${language}.mdx`;
-        const displayFm = fs.existsSync(langPath)
-          ? extractFrontmatter(langPath)
-          : enFm;
-
-        results.push({
-          title: displayFm.title || enFm.title,
-          updatedAt: displayFm.updatedAt || enFm.updatedAt,
-          publishedAt: displayFm.publishedAt || enFm.publishedAt,
-          sortKey: enFm.updatedAt,
-          publishedSortKey: enFm.publishedAt,
-          href: `${basePath}/${item.path}`,
-        });
+        processFile(absBase, `${basePath}/${item.path}`);
       }
     }
   }
 
+  // Manually include intro
+  const introDir = path.join(contentsDir, 'intro');
+  if (fs.existsSync(introDir)) {
+    const introFiles = fs.readdirSync(introDir);
+    const introBaseNames = new Set<string>();
+    for (const f of introFiles) {
+      const base = f.replace(/\.(ta|en)\.mdx$/, '').replace(/\.mdx$/, '');
+      if (!introBaseNames.has(base)) {
+        introBaseNames.add(base);
+        processFile(path.join(introDir, base), `/intro/${base}`);
+      }
+    }
+  }
+
+  // Walk all other categories
   const categories = getCategoriesAndfiles();
   for (const cat of categories) {
-    if (cat.category === 'intro' || cat.category === 'history') continue;
+    if (cat.category === 'history') continue;
     walkItems(cat.items, `/${cat.category}`);
   }
 
-  // Sort is always by .en.mdx updatedAt — but we don't have it separately anymore.
-  // Re-read en updatedAt for sort key:
   return results.sort((a, b) =>
     new Date(b.sortKey).getTime() - new Date(a.sortKey).getTime()
   );
