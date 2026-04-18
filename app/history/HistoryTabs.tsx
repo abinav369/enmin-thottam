@@ -72,7 +72,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
 
   const tabs = [
     { key: 'updated', label: language === 'ta' ? 'அண்மைப் புதுப்பிப்புகள்' : 'Recently updated' },
-    { key: 'published', label: language === 'ta' ? 'பதிவேற்றிய நாள்' : 'Publised on' },
+    { key: 'published', label: language === 'ta' ? 'பதிவேற்றிய நாள்' : 'Published on' },
   ] as const;
 
   const entries = tab === 'updated' ? updatedEntries : publishedEntries;

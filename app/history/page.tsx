@@ -7,7 +7,7 @@ export default async function HistoryPage() {
   const language = (cookieStore.get('language')?.value as 'ta' | 'en') || 'ta';
 
   const entries = await getAllContentMeta(language);
-  const aumAmma = language === 'ta' ? 'ஓம் அம்மா' : 'Aum Amma';
+  const aumAmma = 'ஓம் அம்மா';
 
   const updatedEntries = [...entries].sort(
     (a, b) => new Date(b.sortKey).getTime() - new Date(a.sortKey).getTime()

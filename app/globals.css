@@ -3,13 +3,12 @@
 
 /* Light mode colors */
 :root {
-  --bg-main: #ffffff;
-  --bg-sidebar: #f8f8f8;
-  --text-main: #171717;
-  --text-muted: #64748b;
-  --text-bold: #b91c1c;
-  --border: #e5e5e5;
-  --sidebar-width: 320px;
+  --bg-main: #faf9f7;        /* warm off-white instead of pure white */
+  --bg-sidebar: #f0ede8;     /* warm parchment sidebar */
+  --text-main: #1c1917;      /* warm near-black */
+  --text-muted: #78716c;     /* warm gray */
+  --text-bold: #b91c1c;      /* keep red */
+  --border: #e2ddd8;         /* warm border */
 }
 
 /* Dark mode colors */
@@ -48,6 +47,7 @@ body {
 
 :root {
   --content-size: 1rem;       /* Mobile md content font size */ 
+  --sidebar-width: 320px
 }
 
 @media (min-width: 768px) {
@@ -71,6 +71,23 @@ body {
   :root {
     --sidebar-width: 288px;  /* 320 * 0.9 */
   }
+}
+
+aside.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+
+aside.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+aside.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 9999px;
+}
+
+aside.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
 }
 
 /* Ensure Tamil text renders properly */
