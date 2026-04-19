@@ -245,10 +245,10 @@ export async function getFileContent(
 
 export type ContentMeta = {
   title: string;
-  updatedAt: string;
   publishedAt: string;       // display value
   sortKey: string;           // .en.mdx updatedAt for sorting
   publishedSortKey: string;  // .en.mdx publishedAt for sorting
+  updateHistory: string[];
   href: string;
 };
 
@@ -270,25 +270,43 @@ export async function getAllContentMeta(language: 'ta' | 'en' = 'ta'): Promise<C
     return fm;
   }
 
+  function extractUpdateHistory(raw: string): string[] {
+      const match = raw.match(/updateHistory:\s*\n((?:\s*-\s*.+\n?)*)/);
+      if (!match) return [];
+      return match[1]
+        .split('\n')
+        .map(line => line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim())
+        .filter(s => s.length > 0 && s !== '--' && s !== '-');
+    }
+
   function processFile(absBase: string, href: string) {
-    const enPath = `${absBase}.en.mdx`;
-    if (!fs.existsSync(enPath)) return;
+      const enPath = `${absBase}.en.mdx`;
+      if (!fs.existsSync(enPath)) return;
 
-    const enFm = extractFrontmatter(enPath);
-    if (!enFm.title || !enFm.updatedAt) return;
+      const enRaw = fs.readFileSync(enPath, 'utf-8');
+      const enFm = extractFrontmatter(enPath);
+      if (!enFm.title) return;
 
-    const langPath = language === 'en' ? enPath : `${absBase}.${language}.mdx`;
-    const displayFm = fs.existsSync(langPath) ? extractFrontmatter(langPath) : enFm;
+      const updateHistory = extractUpdateHistory(enRaw);
+      if (updateHistory.length === 0) return; 
 
-    results.push({
-      title: displayFm.title || enFm.title,
-      updatedAt: displayFm.updatedAt || enFm.updatedAt,
-      publishedAt: displayFm.publishedAt || enFm.publishedAt,
-      sortKey: enFm.updatedAt,
-      publishedSortKey: enFm.publishedAt,
-      href,
-    });
-  }
+      const effectiveUpdatedAt = updateHistory[0];
+
+      const langPath = language === 'en' ? enPath : `${absBase}.${language}.mdx`;
+      const displayFm = fs.existsSync(langPath) ? extractFrontmatter(langPath) : enFm;
+    
+      const langRaw = fs.existsSync(langPath) ? fs.readFileSync(langPath, 'utf-8') : enRaw;
+      const displayHistory = language === 'en' ? updateHistory : extractUpdateHistory(langRaw);
+
+      results.push({
+        title: displayFm.title || enFm.title,
+        publishedAt: displayFm.publishedAt || enFm.publishedAt,
+        sortKey: effectiveUpdatedAt,
+        publishedSortKey: enFm.publishedAt,
+        updateHistory: displayHistory.length > 0 ? displayHistory : updateHistory,
+        href,
+      });
+    }
 
   function walkItems(items: ContentItem[], basePath: string) {
     for (const item of items) {

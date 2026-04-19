@@ -25,7 +25,8 @@ function RenderItems({
   toggleFolder,
   initialLanguage,
   mounted,
-  onNavigate
+  onNavigate,
+  theme,
 }: { 
   items: ContentItem[]; 
   basePath: string; 
@@ -35,11 +36,14 @@ function RenderItems({
   initialLanguage: 'ta' | 'en';
   mounted: boolean;
   onNavigate: (href: string) => void;
+  theme: string;
 }) {
+  const activeColor = theme === 'dark' ? '#00FFFF' : '#b91c1c';
+  const hoverColor = theme === 'dark' ? '#00CCCC' : '#dc2626';
+
   return (
     <ul className="ml-4 mt-1 space-y-1 relative">
-      {/* TREE VERTICAL LINE */}
-      <div className="absolute left-0 top-0 bottom-0 w-px bg-gray-700" style={{ marginLeft: '-0.5rem' }}></div>
+      <div className="absolute left-0 top-0 bottom-0 w-px" style={{ background: 'var(--border)', marginLeft: '-0.5rem' }}></div>
 
       {items.map((item) => {
         if (item.type === 'file') {
@@ -49,20 +53,14 @@ function RenderItems({
 
           return (
             <li key={item.path} className="relative">
-              {/* TREE HORIZONTAL LINE FOR FILES */}
-              <div className="absolute left-0 top-1/2 w-2 h-px bg-gray-500" style={{ marginLeft: '-0.5rem' }}></div>
-
+              <div className="absolute left-0 top-1/2 w-2 h-px" style={{ background: 'var(--border)', marginLeft: '-0.5rem' }}></div>
               <Link
                 href={href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate(href);
-                }}
-                className={`block pl-3 ${
-                  isActive
-                    ? "text-[#00FFFF] font-semibold"
-                    : "text-[#9CA3AF] hover:text-[#00CCCC]"
-                }`}
+                onClick={(e) => { e.preventDefault(); onNavigate(href); }}
+                className="block pl-3 transition-colors"
+                style={{ color: isActive ? activeColor : 'var(--text-muted)' }}
+                onMouseEnter={e => { if (!isActive) (e.target as HTMLElement).style.color = hoverColor; }}
+                onMouseLeave={e => { if (!isActive) (e.target as HTMLElement).style.color = 'var(--text-muted)'; }}
               >
                 <span suppressHydrationWarning>
                   {item.displayName?.[initialLanguage] || item.name}
@@ -76,16 +74,14 @@ function RenderItems({
 
           return (
             <li key={item.path} className="mb-2 relative">
-              {/* TREE HORIZONTAL LINE FOR FOLDERS */}
-              <div className="absolute left-0 top-3 w-2 h-px bg-gray-500" style={{ marginLeft: '-0.5rem' }}></div>
-
+              <div className="absolute left-0 top-3 w-2 h-px" style={{ background: 'var(--border)', marginLeft: '-0.5rem' }}></div>
               <details open={isOpen}>
                 <summary 
-                  className="cursor-pointer font-medium text-gray-300 hover:text-[#00CCCC] pl-3"
-                  onClick={(e) => {
-                    e.preventDefault(); 
-                    toggleFolder(folderFullPath);
-                  }}
+                  className="cursor-pointer font-medium pl-3 transition-colors"
+                  style={{ color: 'var(--text-main)' }}
+                  onMouseEnter={e => { (e.target as HTMLElement).style.color = hoverColor; }}
+                  onMouseLeave={e => { (e.target as HTMLElement).style.color = 'var(--text-main)'; }}
+                  onClick={(e) => { e.preventDefault(); toggleFolder(folderFullPath); }}
                 >
                   <span suppressHydrationWarning>
                     {item.displayName?.[initialLanguage] || item.name}
@@ -100,6 +96,7 @@ function RenderItems({
                   initialLanguage={initialLanguage}
                   mounted={mounted}
                   onNavigate={onNavigate}
+                  theme={theme}
                 />
               </details>
             </li>
@@ -118,14 +115,14 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   const [mounted, setMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const activeColor = theme === 'dark' ? '#00FFFF' : '#b91c1c';
+  const hoverColor = theme === 'dark' ? '#00CCCC' : '#dc2626';
+
+  useEffect(() => { setMounted(true); }, []);
 
   const activeCategory = useMemo(() => {
     const parts = pathname.split('/').filter(p => p.length > 0);
-    const category = parts.length > 0 ? decodeURIComponent(parts[0]) : '';
-    return category;
+    return parts.length > 0 ? decodeURIComponent(parts[0]) : '';
   }, [pathname]);
 
   const [openFolders, setOpenFolders] = useState<Set<string>>(() => {
@@ -160,22 +157,14 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   useEffect(() => {
     if (prevPathnameRef.current !== pathname) {
       prevPathnameRef.current = pathname;
-      
-      const parts = decodeURIComponent(pathname)
-        .split('/')
-        .filter(Boolean);
-
+      const parts = decodeURIComponent(pathname).split('/').filter(Boolean);
       setOpenFolders((prev) => {
         const newSet = new Set(prev);
         let current = "";
-        
         for (let i = 0; i < parts.length - 1; i++) {
           current += `/${parts[i]}`;
-          if (!prev.has(current)) {
-            newSet.add(current);
-          }
+          if (!prev.has(current)) newSet.add(current);
         }
-        
         return newSet.size !== prev.size ? newSet : prev;
       });
     }
@@ -200,48 +189,34 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     return paths;
   }, [data]);
 
-//********************************************
-// Swiping to open close side bar in mobile **
-
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
+
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       touchStartX.current = e.touches[0].clientX;
       touchStartY.current = e.touches[0].clientY;
     };
-
     const handleTouchEnd = (e: TouchEvent) => {
       const deltaX = e.changedTouches[0].clientX - touchStartX.current;
       const deltaY = e.changedTouches[0].clientY - touchStartY.current;
-
-      // Ignore if mostly a vertical scroll
       if (Math.abs(deltaY) > Math.abs(deltaX)) return;
-
-      if (deltaX > 60 && !open) setOpen(true);   // swipe right → open
-      if (deltaX < -60 && open) setOpen(false);  // swipe left → close
+      if (deltaX > 60 && !open) setOpen(true);
+      if (deltaX < -60 && open) setOpen(false);
     };
-
     document.addEventListener('touchstart', handleTouchStart, { passive: true });
     document.addEventListener('touchend', handleTouchEnd, { passive: true });
-
     return () => {
       document.removeEventListener('touchstart', handleTouchStart);
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [open]);
 
-//                   End                    **
-// ******************************************* 
-
   const toggleFolder = (path: string) => {
     setOpenFolders((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(path)) {
-        newSet.delete(path);
-      } else {
-        newSet.add(path);
-      }
+      if (newSet.has(path)) newSet.delete(path);
+      else newSet.add(path);
       return newSet;
     });
   };
@@ -249,11 +224,8 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   const toggleCategory = (category: string) => {
     setOpenCategories((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
-      } else {
-        newSet.add(category);
-      }
+      if (newSet.has(category)) newSet.delete(category);
+      else newSet.add(category);
       return newSet;
     });
   };
@@ -267,9 +239,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     setOpenFolders(new Set(allFolderPaths)); 
     const allCats = new Set<string>();
     data.forEach(cat => {
-      if (cat.category !== "intro" && cat.category !== "history") {
-        allCats.add(cat.category);
-      }
+      if (cat.category !== "intro" && cat.category !== "history") allCats.add(cat.category);
     });
     setOpenCategories(allCats);
   };
@@ -278,42 +248,44 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     const newLang = language === 'ta' ? 'en' : 'ta';
     setLanguage(newLang);
     document.cookie = `language=${newLang}; path=/; max-age=31536000`;
-    
-    startTransition(() => {
-      router.refresh();
-    });
+    startTransition(() => { router.refresh(); });
   };
 
-  // Wrapper for navigation to show loading state
   const handleNavigation = (href: string) => {
     if (decodeURIComponent(pathname) === href) return;
-    
-    startTransition(() => {
-      router.push(href);
-    });
+    startTransition(() => { router.push(href); });
   };
 
   const allExpanded = openFolders.size === allFolderPaths.size && 
-                      openCategories.size === data.filter(c => c.category !== "intro" && c.category !== "history").length;
+    openCategories.size === data.filter(c => c.category !== "intro" && c.category !== "history").length;
+
+  // Nav link color helper
+  const navLinkColor = (isActive: boolean) => isActive ? '#C4A484' : 'var(--text-main)';
 
   return (
     <div className="flex min-h-screen relative transition-colors" style={{ background: 'var(--bg-main)', color: 'var(--text-main)' }}>
+
       {/* SIDEBAR */}
       <aside
-        className={`transition-all duration-300 ease-in-out  fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto z-40
-          ${open ? "w-80 p-4" : "w-0 p-0 overflow-hidden"}
+        className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full overflow-y-auto z-40
+          ${open ? "w-72 md:w-80 p-3 md:p-4" : "w-0 p-0 overflow-hidden"}
         `}
         style={{ 
-        //  background: '#121212', 
-          background: '#000000',
-          borderRight: '1px solid #27272a'
+          background: 'var(--bg-sidebar)',
+          borderRight: '1px solid var(--border)',
         }}
       >
         {/* Close button */}
         {open && (
           <button
             onClick={() => setOpen(false)}
-            className="cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 z-50 px-1.5 py-8 rounded-l-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-2.5 transition-all duration-300"
+            className="cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 z-50 px-1.5 py-8 rounded-l-xl hover:px-2.5 transition-all duration-300"
+            style={{ 
+              background: theme === 'dark' ? '#1f2937' : '#e5e7eb',
+              color: 'var(--text-main)',
+              border: '1px solid var(--border)',
+              borderRight: 'none',
+            }}
             title={mounted ? t('closeSidebar') : 'Close sidebar'}
             aria-label={mounted ? t('closeSidebar') : 'Close sidebar'}
           >
@@ -324,55 +296,53 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         {open && (
           <>
             <div className="mb-6 space-y-4">
+              {/* Title */}
               <Link
                 href="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/");
-                }}
-                className="block text-5xl font-bold text-center cursor-pointer"
+                onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
+                className="block text-3xl md:text-5xl font-bold text-center cursor-pointer"
                 style={{ color: '#C4A484' }}
               >
                 {language === 'ta' ? 'அன்பு' : 'Anbu'}
               </Link>
               
+              {/* Language + Theme buttons */}
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={handleLanguageChange}
                   disabled={isPending}
-                  className="cursor-pointer text-sm px-3 py-2 bg-[#00e6e6] hover:bg-[#00cccc] disabled:bg-[#00c0c0] disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
+                  className="cursor-pointer text-sm px-3 py-2 bg-[#00cccc] hover:bg-[#00ffff] disabled:bg-[#00c0c0] disabled:cursor-not-allowed rounded-md transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <Globe className="w-4 h-4" style={{ color: '#000000' }} />
-                  <span className = "" style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
+                  <span style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
                 </button>
                 
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="cursor-pointer text-sm px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
+                  className="cursor-pointer text-sm px-3 py-2 rounded-md  hover:bg-gray-500 transition-colors font-medium flex items-center justify-center gap-2"
+                  style={{
+                    background: theme === 'dark' ? '#4b5563' : '#d1d5db',
+                    color: theme === 'dark' ? '#ffffff' : '#1f2937',
+                  }}
                 >
-                  {theme === 'dark' ? (
-                    <Sun className="w-4 h-4" />
-                  ) : (
-                    <Moon className="w-4 h-4" />
-                  )}
-
+                  {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
               </div>
 
-              <div className="my-4 h-px w-full bg-linear-to-r from-transparent via-gray-500 to-transparent" />
+              {/* Divider */}
+              <div className="h-px w-full" style={{ background: 'var(--border)' }} />
 
+              {/* Contents heading + expand/collapse */}
               <div className="flex items-end justify-between">
-                <h2 className="text-2xl font-semibold" style={{ color: "#00FFFF" }}>
+                <h2 className="text-xl md:text-2xl font-semibold" style={{ color: 'var(--text-bold)' }}>
                   {language === 'ta' ? 'பொருளடக்கம்' : 'Contents'}
                 </h2>
- 
                 <button
                   onClick={allExpanded ? collapseAll : expandAll}
-                  className="cursor-pointer text-sm px-2 py-2 text-gray-300 hover:text-white underline-offset-7 hover:underline transition-colors flex items-center gap-1"
+                  className="cursor-pointer text-sm px-2 py-2 hover:underline underline-offset-7 transition-colors flex items-center gap-1"
+                  style={{ color: 'var(--text-muted)' }}
                 >
-                  <ChevronRight
-                    className={`w-4 h-4 ${allExpanded ? 'rotate-90' : ''}`}
-                  />
+                  <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${allExpanded ? 'rotate-90' : ''}`} />
                   <span>
                     {allExpanded
                       ? (language === 'ta' ? 'மூடு' : 'Collapse')
@@ -383,12 +353,16 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
               </div>
             </div>
             
+            {/* Nav links */}
             <ul>
               <li className="mb-4">
                 <Link
                   href="/"
                   onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
-                  className={`block text-lg ${pathname === "/" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+                  className="block text-base md:text-lg font-medium transition-colors"
+                  style={{ color: navLinkColor(pathname === "/") }}
+                  onMouseEnter={e => { if (pathname !== "/") (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                  onMouseLeave={e => { if (pathname !== "/") (e.currentTarget as HTMLElement).style.color = 'var(--text-main)'; }}
                 >
                   {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
                 </Link>
@@ -397,33 +371,30 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                 <Link
                   href="/history"
                   onClick={(e) => { e.preventDefault(); handleNavigation("/history"); }}
-                  className={`block text-lg ${pathname === "/history" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+                  className="block text-base md:text-lg font-medium transition-colors"
+                  style={{ color: navLinkColor(pathname === "/history") }}
+                  onMouseEnter={e => { if (pathname !== "/history") (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                  onMouseLeave={e => { if (pathname !== "/history") (e.currentTarget as HTMLElement).style.color = 'var(--text-main)'; }}
                 >
                   {initialLanguage === 'ta' ? 'காலச்சுவடு' : 'Updates'}
                 </Link>
               </li>
+
               {data.map((cat) => {
-                //const isIntro = cat.category === "intro";
-                //const isHistory = cat.category === "history";
                 const categoryDisplayName = cat.displayName?.[initialLanguage] || cat.category;
-
-                
-
                 const isCategoryOpen = openCategories.has(cat.category);
                 
                 return (
                   <li key={cat.category} className="mb-2">
                     <details open={isCategoryOpen}>
                       <summary 
-                        className="cursor-pointer font-semibold text-gray-300 hover:text-[#00CCCC]"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleCategory(cat.category);
-                        }}
+                        className="cursor-pointer font-semibold transition-colors"
+                        style={{ color: 'var(--text-main)' }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = hoverColor; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--text-main)'; }}
+                        onClick={(e) => { e.preventDefault(); toggleCategory(cat.category); }}
                       >
-                        <span>
-                          {categoryDisplayName}
-                        </span>
+                        <span>{categoryDisplayName}</span>
                       </summary>
                       <RenderItems 
                         items={cat.items} 
@@ -434,6 +405,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                         initialLanguage={initialLanguage}
                         mounted={mounted}
                         onNavigate={handleNavigation}
+                        theme={theme}
                       />
                     </details>
                   </li>
@@ -444,11 +416,25 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         )}
       </aside>
 
+      {/* Mobile overlay backdrop */}
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
       {/* Open Button */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="cursor-pointer fixed top-1/2 left-0 -translate-y-1/2 z-50 px-1.5 py-8 md:px-2 md:py-10 rounded-r-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-3 transition-all duration-300"
+          className="cursor-pointer fixed top-1/2 left-0 -translate-y-1/2 z-50 px-1.5 py-8 md:px-2 md:py-10 rounded-r-xl hover:px-3 transition-all duration-300"
+          style={{
+            background: theme === 'dark' ? '#1f2937' : '#e5e7eb',
+            color: 'var(--text-main)',
+            border: '1px solid var(--border)',
+            borderLeft: 'none',
+          }}
           title={mounted ? t('openSidebar') : 'Open sidebar'}
           aria-label={mounted ? t('openSidebar') : 'Open sidebar'}
           suppressHydrationWarning
@@ -457,7 +443,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         </button>
       )}
 
-      {/* PARENT BOX - Fixed position, unaffected by sidebar */}
+      {/* MAIN CONTENT */}
       <main
         className="fixed top-0 right-0 bottom-0 overflow-y-auto"
         style={{ 
@@ -466,19 +452,17 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
           transition: 'left 300ms ease-in-out'
         }}
       >
-        {/* LOADER */}
         {isPending && (
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
             <div className="flex flex-col items-center gap-3">
               <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-blue-500"></div>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                 {language === 'ta' ? 'இறங்குகிறது...' : 'Loading...'}
               </p>
             </div>
           </div>
         )}
         
-        {/* CONTENT - Centered within parent box */}
         <div 
           className={`w-full max-w-7xl mx-auto md:p-10 px-7 transition-all duration-300
             ${isPending ? "opacity-30 pointer-events-none" : "opacity-100"}

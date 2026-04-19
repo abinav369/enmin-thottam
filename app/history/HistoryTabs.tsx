@@ -12,18 +12,27 @@ type Props = {
 
 export default function HistoryTabs({ updatedEntries, publishedEntries, language }: Props) {
   const [tab, setTab] = useState<'updated' | 'published'>('updated');
+  const [historyModal, setHistoryModal] = useState<string[] | null>(null);
+
+  const toTamilNumerals = (numStr: string) => {
+    const map: Record<string, string> = {
+      '0': '௦', '1': '௧', '2': '௨', '3': '௩', '4': '௪',
+      '5': '௫', '6': '௬', '7': '௭', '8': '௮', '9': '௯',
+    };
+    return numStr.replace(/[0-9]/g, (d) => map[d]);
+  };
 
   const formatDisplayDate = (dateStr: string) => {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr; // Tamil string, return as-is
-    return new Intl.DateTimeFormat('en-IN', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', hour12: false,
-    }).format(d).replace(',', ','); // gives "11/02/2026, 00:33"
+    if (isNaN(d.getTime())) return dateStr;
+    const date = d.toISOString().slice(0, 10);
+    const time = d.toTimeString().slice(0, 5);
+    return `${date}, ${time}`;
   };
+
   const getRelativeTime = (dateStr: string) => {
     const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return null; // return null if unparseable
+    if (isNaN(d.getTime())) return null;
 
     const diff = Date.now() - d.getTime();
     const seconds = Math.floor(diff / 1000);
@@ -33,23 +42,6 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
     const weeks = Math.floor(days / 7);
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
-
-    const toTamilNumerals = (numStr: string) => {
-    const map: Record<string, string> = {
-      '0': '௦',
-      '1': '௧',
-      '2': '௨',
-      '3': '௩',
-      '4': '௪',
-      '5': '௫',
-      '6': '௬',
-      '7': '௭',
-      '8': '௮',
-      '9': '௯',
-    };
-
-    return numStr.replace(/[0-9]/g, (d) => map[d]);
-  };
 
     if (language === 'ta') {
       if (seconds < 60) return `${toTamilNumerals(seconds.toString())} விநாடிகள் முன்பு`;
@@ -70,6 +62,9 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
     return `${years} years ago`;
   };
 
+  const formatCount = (n: number) =>
+    language === 'ta' ? toTamilNumerals(n.toString()) : n.toString();
+
   const tabs = [
     { key: 'updated', label: language === 'ta' ? 'அண்மைப் புதுப்பிப்புகள்' : 'Recently updated' },
     { key: 'published', label: language === 'ta' ? 'பதிவேற்றிய நாள்' : 'Published on' },
@@ -79,6 +74,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
 
   return (
     <>
+      {/* Tab bar */}
       <div className="flex gap-4 border-b border-(--border) mb-6">
         {tabs.map((t) => (
           <button
@@ -95,11 +91,15 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
         ))}
       </div>
 
+      {/* Entries */}
       <ul className="space-y-3 pl-0! ml-0!">
         {entries.map((entry) => {
-          const displayDate = tab === 'updated' ? entry.updatedAt : entry.publishedAt;
+          const displayDate = tab === 'updated'
+            ? (entry.updateHistory?.[0] ?? '')
+            : entry.publishedAt;
           const sortDate = tab === 'updated' ? entry.sortKey : entry.publishedSortKey;
           const relative = getRelativeTime(sortDate);
+          const hasHistory = tab === 'updated' && entry.updateHistory && entry.updateHistory.length > 1;
 
           return (
             <li key={entry.href}>
@@ -107,17 +107,37 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
                 href={entry.href}
                 className="flex flex-col gap-1 group no-underline! border border-(--border) rounded-lg px-4 py-3 hover:border-[#00FFFF] transition-colors"
               >
-                {/* Line 1: title */}
                 <span className="text-lg text-(--text-main)">
                   {entry.title}
                 </span>
-                {/* Line 2: date left, relative right */}
                 <div className="flex flex-col gap-0.5 md:flex-row md:items-center md:justify-between md:gap-4">
-                  <span className="text-sm text-(--text-muted)">
-                    {formatDisplayDate(displayDate)}
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      className={`text-sm text-(--text-muted) ${hasHistory ? 'cursor-pointer underline decoration-dashed underline-offset-7 hover:text-(--text-main)' : ''}`}
+                      onClick={hasHistory ? (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setHistoryModal(entry.updateHistory);
+                      } : undefined}
+                    >
+                      {formatDisplayDate(displayDate)}
+                    </span>
+                    {hasHistory && (
+                      <span
+                        className="text-xs px-1.5 py-0.5 rounded-full cursor-pointer hover:opacity-80 transition-opacity"
+                        style={{ background: 'var(--border)', color: 'var(--text-muted)' }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setHistoryModal(entry.updateHistory);
+                        }}
+                      >
+                        {formatCount(entry.updateHistory.length)}
+                      </span>
+                    )}
                   </span>
                   {relative && (
-                    <span className="flex flex-col gap-0.5 md:flex-row md:items-center md:justify-between md:gap-4">
+                    <span className="text-sm text-(--text-muted)">
                       {relative}
                     </span>
                   )}
@@ -127,6 +147,48 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
           );
         })}
       </ul>
+
+      {/* History modal */}
+      {historyModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          onClick={() => setHistoryModal(null)}
+        >
+          <div
+            className="rounded-xl px-6 py-5 w-[86vw] md:w-auto md:min-w-80 md:max-w-lg shadow-xl"
+            style={{ background: 'var(--bg-sidebar)', border: '1px solid var(--border)' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="font-medium" style={{ color: 'var(--text-muted)', fontSize: 'var(--content-size)' }}>
+                {language === 'ta' ? 'புதுப்பிப்பு வரலாறு' : 'Update history'}
+              </span>
+              <button
+                onClick={() => setHistoryModal(null)}
+                className="cursor-pointer leading-none ml-6"
+                style={{ color: 'var(--text-muted)', fontSize: 'var(--content-size)' }}
+              >
+                ✕
+              </button>
+            </div>
+            <ul className="space-y-3">
+              {historyModal.map((date, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3"
+                  style={{ color: i === 0 ? 'var(--text-main)' : 'var(--text-muted)', fontSize: 'var(--content-size)' }}
+                >
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ background: i === 0 ? '#00FFFF' : 'var(--border)' }}
+                  />
+                  {formatDisplayDate(date)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </>
   );
 }

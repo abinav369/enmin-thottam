@@ -34,7 +34,7 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
         aumAmma={result.frontmatter.aumAmma}
         title={result.frontmatter.title}
         publishedAt={result.frontmatter.publishedAt}
-        updatedAt={result.frontmatter.updatedAt}
+        updateHistory={result.frontmatter.updateHistory}
         readingTime={result.readingTime}
         language={serverLanguage}
      />

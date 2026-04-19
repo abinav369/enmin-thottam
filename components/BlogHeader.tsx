@@ -4,7 +4,7 @@ type BlogHeaderProps = {
   aumAmma: string;
   title: string;
   publishedAt: string;
-  updatedAt?: string;
+  updateHistory?: string[];
   readingTime: string;
   language: 'ta' | 'en';
 };
@@ -13,7 +13,7 @@ export default function BlogHeader({
   aumAmma,
   title,
   publishedAt,
-  updatedAt,
+  updateHistory,
   readingTime,
   language,
 }: BlogHeaderProps) {
@@ -58,6 +58,9 @@ export default function BlogHeader({
     return `${tamilNum} நிமிட படிப்பு`;
   };
 
+  const latestUpdate = updateHistory?.[0];
+
+
   return ( 
     <header className="mb-8 border-b border-(--border) pb-4">
       {/* ஓம் அம்மா */}
@@ -86,12 +89,12 @@ export default function BlogHeader({
           {formatReadingTime()}
         </span>
 
-        {updatedAt && (
+        {latestUpdate && (
           <>
             <span className="flex items-center gap-1 md:ml-auto">
               <RefreshCw size={15} className="md:hidden" />
               <RefreshCw size={18} className="hidden md:inline" />
-              {language === 'en' ? formatDateTime(updatedAt) : updatedAt}
+              {language === 'en' ? formatDateTime(latestUpdate) : latestUpdate}
             </span>
           </>
         )}
