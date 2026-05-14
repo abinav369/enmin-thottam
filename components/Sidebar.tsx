@@ -460,10 +460,16 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       {/* PARENT BOX - Fixed position, unaffected by sidebar */}
       <main
         className="fixed top-0 right-0 bottom-0 overflow-y-auto"
-        style={{ 
+        /*style={{ 
           background: 'var(--bg-main)',
           left: open ? 'var(--sidebar-width)' : '0px',
           transition: 'left 300ms ease-in-out'
+        }}*/
+          style={{ 
+          background: 'var(--bg-main)',
+          left: 0,
+          transform: open ? 'translateX(var(--sidebar-width))' : 'translateX(0)',
+          transition: 'transform 300ms ease-in-out',
         }}
       >
         {/* LOADER */}

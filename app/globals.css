@@ -47,7 +47,7 @@ body {
 
 :root {
   --content-size: 1rem;       /* Mobile md content font size */ 
-  --sidebar-width: 320px
+  --sidebar-width: 288px
 }
 
 @media (min-width: 768px) {
