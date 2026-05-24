@@ -117,9 +117,16 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   const [open, setOpen] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isMobile, setIsMobile] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+  
 
   useEffect(() => {
-    setMounted(true);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    setHasMounted(true);
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
   const activeCategory = useMemo(() => {
@@ -306,7 +313,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         style={{ 
         //  background: '#121212', 
           background: '#000000',
-          borderRight: '1px solid #27272a'
+          borderRight: '1px solid #27272a',
         }}
       >
         {/* Close button */}
@@ -448,7 +455,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="cursor-pointer fixed top-1/2 left-0 -translate-y-1/2 z-50 px-1.5 py-8 md:px-2 md:py-10 rounded-r-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-3 transition-all duration-300"
+          className="cursor-pointer fixed top-1/2 left-0 -translate-y-1/2 z-50 px-1.5 py-8 md:px-2 md:py-9 rounded-r-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-3 transition-all duration-300"
           title={mounted ? t('openSidebar') : 'Open sidebar'}
           aria-label={mounted ? t('openSidebar') : 'Open sidebar'}
           suppressHydrationWarning
@@ -456,20 +463,27 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
           ⟩
         </button>
       )}
+      
 
       {/* PARENT BOX - Fixed position, unaffected by sidebar */}
       <main
         className="fixed top-0 right-0 bottom-0 overflow-y-auto"
-        /*style={{ 
+        style={{ 
           background: 'var(--bg-main)',
-          left: open ? 'var(--sidebar-width)' : '0px',
-          transition: 'left 300ms ease-in-out'
-        }}*/
-          style={{ 
-          background: 'var(--bg-main)',
-          left: 0,
-          transform: open ? 'translateX(var(--sidebar-width))' : 'translateX(0)',
-          transition: 'transform 300ms ease-in-out',
+          ...(!hasMounted ? {
+            left: open ? 'var(--sidebar-width)' : '0px',
+            transition: 'left 300ms ease-in-out',
+          } : isMobile ? {
+            left: 0,
+            transform: open ? 'translateX(var(--sidebar-width))' : 'translateX(0px)',
+            width: '100vw',
+            transition: 'transform 300ms ease-in-out, width 300ms ease-in-out',
+          } : {
+            left: 0,
+            transform: open ? 'translateX(var(--sidebar-width))' : 'translateX(0px)',
+            width: open ? 'calc(100vw - var(--sidebar-width))' : '100vw',
+            transition: 'transform 300ms ease-in-out, width 300ms ease-in-out',
+          })
         }}
       >
         {/* LOADER */}

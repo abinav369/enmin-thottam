@@ -47,7 +47,7 @@ body {
 
 :root {
   --content-size: 1rem;       /* Mobile md content font size */ 
-  --sidebar-width: 288px
+  --sidebar-width: 320px
 }
 
 @media (min-width: 768px) {
@@ -65,11 +65,8 @@ body {
 }
 
 @media (max-width: 767px) {
-  aside {
-    zoom: 0.9;
-  }
   :root {
-    --sidebar-width: 288px;  /* 320 * 0.9 */
+    --sidebar-width: 320px;  /* 320 * 0.9 */
   }
 }
 
