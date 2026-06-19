@@ -43,7 +43,7 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
   }, [clientLanguage, serverLanguage, router]);
 
   const footer = {
-    email: { ta: 'மின்னஞ்சல்', en: 'Email', url: 'mailto:your@email.com' },
+    email: { ta: 'மின்னஞ்சல்', en: 'Email', url: 'mailto:anbu.enmin.thottam@gmail.com' },
     github: { ta: 'கிட்ஹப்', en: 'GitHub', url: 'https://github.com/abinav369/enmin-thottam' },
     youtube: { ta: 'வலையொளி', en: 'YouTube', url: 'https://www.youtube.com/@anbu_eerili' },
     instagram: { ta: 'படவரி', en: 'Instagram', url: 'https://instagram.com/anbu._.03' },

@@ -65,6 +65,9 @@ body {
 }
 
 @media (max-width: 767px) {
+  /* aside {
+    zoom: 0.9;
+  } */
   :root {
     --sidebar-width: 320px;  /* 320 * 0.9 */
   }

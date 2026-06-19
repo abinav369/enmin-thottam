@@ -2,6 +2,7 @@ import "./globals.css"
 import { getCategoriesAndfiles } from "@/lib/getContent";
 import { ClientLayout } from "@/components/ClientLayout";
 import { cookies } from "next/headers";
+import ClickSound from "@/components/ClickSound";
 
 export const metadata = {
     title: "எண்மின் தோட்டம்",
@@ -35,6 +36,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="flex min-h-screen">
+        <ClickSound />
         <ClientLayout data={data} initialLanguage={initialLanguage}>
           {children}
         </ClientLayout>
