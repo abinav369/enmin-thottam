@@ -4,11 +4,11 @@ import { useEffect } from "react";
 
 export default function ClickSound() {
   useEffect(() => {
+    if (!window.matchMedia('(pointer: fine)').matches) return;
     const clickAudio = new Audio('/sounds/universfield-computer-mouse-click-352734-link2.0.mp3');
 
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-
 
       if (target.closest('a, button, summary')) {
         clickAudio.currentTime = 0;
