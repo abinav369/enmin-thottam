@@ -344,25 +344,57 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
               </Link>
               
               <div className="grid grid-cols-2 gap-2">
+
+                {/* Language button */}
                 <button
                   onClick={handleLanguageChange}
                   disabled={isPending}
-                  className="cursor-pointer text-sm px-3 py-2 bg-[#00e6e6] hover:bg-[#00cccc] disabled:bg-[#00c0c0] disabled:cursor-not-allowed text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
+                  data-sound="button"
+                  className="cursor-pointer text-sm px-3 py-2 rounded-md font-medium flex items-center justify-center gap-2 
+                    transition-all duration-150 
+                    active:scale-95 active:translate-y-0.5
+                    disabled:cursor-not-allowed disabled:opacity-60"
+                  style={{
+                    background: '#00dddd',
+                    color: '#000000',
+                    boxShadow: '0 4px 0 #008888, 0 4px 6px rgba(0,0,0,0.5)',
+                  }}
+                  onMouseDown={(e) => { e.currentTarget.style.boxShadow = '0 1px 0 #008888, 0 2px 3px rgba(0,0,0,0.2)'; e.currentTarget.style.transform = 'translateY(2px)'; }}
+                  onMouseUp={(e) => { e.currentTarget.style.boxShadow = '0 4px 0 #008888, 0 4px 6px rgba(0,0,0,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 4px 0 #008888, 0 4px 6px rgba(0,0,0,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
                 >
                   <Globe className="w-4 h-4" style={{ color: '#000000' }} />
-                  <span className = "" style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
+                  <span style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
                 </button>
                 
+                {/* Theme button */}
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="cursor-pointer text-sm px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md transition-colors font-medium flex items-center justify-center gap-2"
+                  data-sound="button"
+                  className="cursor-pointer text-sm px-3 py-2  rounded-md font-medium flex items-center justify-center gap-2
+                    transition-all duration-150
+                    active:scale-95 active:translate-y-0.5"
+                  style={{
+                    background: '#1a2b3b',
+                    color: '#ffffff',
+                    border: '#273d4c',
+                    boxShadow: '0 4px 0 #000000, 0 4px 6px rgba(0,0,0,0.5)',
+                  }}
+                  onMouseDown={(e) => { 
+                    e.currentTarget.style.boxShadow = '0 1px 0 #273d4c, 0 2px 3px rgba(0,0,0,0.2)'; 
+                    e.currentTarget.style.transform = 'translateY(2px)'; 
+                  }}
+                  onMouseUp={(e) => { 
+                    e.currentTarget.style.boxShadow = '0 4px 0 #273d4c, 0 4px 6px rgba(0,0,0,0.3)'; 
+                    e.currentTarget.style.transform = 'translateY(0)'; 
+                  }}
+                  onMouseLeave={(e) => { 
+                    e.currentTarget.style.boxShadow = '0 4px 0 #273d4c, 0 4px 6px rgba(0,0,0,0.3)'; 
+                    e.currentTarget.style.transform = 'translateY(0)'; 
+                  }}
                 >
-                  {theme === 'dark' ? (
-                    <Sun className="w-4 h-4" />
-                  ) : (
-                    <Moon className="w-4 h-4" />
-                  )}
-
+                  {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                  <span className="text-xs">{theme === 'dark' ? '' : ''}</span>
                 </button>
               </div>
 
@@ -410,8 +442,6 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                 </Link>
               </li>
               {data.map((cat) => {
-                //const isIntro = cat.category === "intro";
-                //const isHistory = cat.category === "history";
                 const categoryDisplayName = cat.displayName?.[initialLanguage] || cat.category;
 
                 
