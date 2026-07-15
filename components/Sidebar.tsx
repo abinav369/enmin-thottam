@@ -119,7 +119,8 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
   const [isPending, startTransition] = useTransition();
   const [isMobile, setIsMobile] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
-  
+  const themeShadow = '0 4px 0 #273d4c, 0 4px 6px rgba(0,0,0,0.3)';
+  const themeShadowPressed = '0 1px 0 #273d4c, 0 2px 3px rgba(0,0,0,0.2)';
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -371,30 +372,28 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
                 <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                   data-sound="button"
-                  className="cursor-pointer text-sm px-3 py-2  rounded-md font-medium flex items-center justify-center gap-2
-                    transition-all duration-150
-                    active:scale-95 active:translate-y-0.5"
+                  className="cursor-pointer text-sm px-3 py-2 rounded-md font-medium flex items-center justify-center gap-2 
+                  transition-all duration-150
+                  active:scale-95 active:translate-y-0.5"
                   style={{
                     background: '#1a2b3b',
                     color: '#ffffff',
-                    border: '#273d4c',
-                    boxShadow: '0 4px 0 #000000, 0 4px 6px rgba(0,0,0,0.5)',
+                    boxShadow: themeShadow,
                   }}
-                  onMouseDown={(e) => { 
-                    e.currentTarget.style.boxShadow = '0 1px 0 #273d4c, 0 2px 3px rgba(0,0,0,0.2)'; 
-                    e.currentTarget.style.transform = 'translateY(2px)'; 
+                  onMouseDown={(e) => {
+                    e.currentTarget.style.boxShadow = themeShadowPressed;
+                    e.currentTarget.style.transform = 'translateY(2px)';
                   }}
-                  onMouseUp={(e) => { 
-                    e.currentTarget.style.boxShadow = '0 4px 0 #273d4c, 0 4px 6px rgba(0,0,0,0.3)'; 
-                    e.currentTarget.style.transform = 'translateY(0)'; 
+                  onMouseUp={(e) => {
+                    e.currentTarget.style.boxShadow = themeShadow;
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
-                  onMouseLeave={(e) => { 
-                    e.currentTarget.style.boxShadow = '0 4px 0 #273d4c, 0 4px 6px rgba(0,0,0,0.3)'; 
-                    e.currentTarget.style.transform = 'translateY(0)'; 
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = themeShadow;
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                  <span className="text-xs">{theme === 'dark' ? '' : ''}</span>
                 </button>
               </div>
 
