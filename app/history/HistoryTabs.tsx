@@ -137,7 +137,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
                     )}
                   </span>
                   {relative && (
-                    <span className="text-sm text-(--text-muted)">
+                    <span className="text-sm text-right text-(--text-muted)">
                       {relative}
                     </span>
                   )}
