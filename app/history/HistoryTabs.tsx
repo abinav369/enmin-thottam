@@ -105,7 +105,7 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
             <li key={entry.href}>
               <Link
                 href={entry.href}
-                className="flex flex-col gap-1 group no-underline! border border-(--border) rounded-lg px-4 py-3 hover:border-[#00FFFF] transition-colors"
+                className="flex flex-col gap-1 group no-underline! border border-(--border) rounded-lg px-4 py-3 hover:border-[#00dddd] transition-colors"
               >
                 <span className="text-lg text-(--text-main)">
                   {entry.title}
