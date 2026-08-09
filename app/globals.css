@@ -52,17 +52,20 @@ body {
 }
 
 :root {
-  --content-size: 1rem;       /* Mobile md content font size */ 
-  --sidebar-width: 310px
+  --content-size: 1rem;
+  --sidebar-width: 20rem;    /* mobile */
+  /* --sidebar-font-size: 1rem */
 }
 
 @media (min-width: 768px) {
   body {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   :root {
-    --content-size: 1.1rem;    /* Desktop md content font size */
+    --content-size: 1.05rem;
+    --sidebar-width: 19rem;  /* desktop */
+    /* --sidebar-font-size: 0.09rem */
   }
 
   .prose h1.blog-title {
@@ -70,17 +73,9 @@ body {
   }
 }
 
-@media (max-width: 767px) {
-  /* aside {
-    zoom: 0.9;
-  } */
-  :root {
-    --sidebar-width: 320px;  /* 320 * 0.9 */
-  }
-}
-
 /* Sidebar scrollbar */
 aside {
+  /* font-size: var(--sidebar-font-size); */
   scrollbar-width: thin;
   scrollbar-color: #374151 transparent;
 }
