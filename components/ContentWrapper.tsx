@@ -62,7 +62,7 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
           title={result.frontmatter.title}
           publishedAt={result.frontmatter.publishedAt}
           updateHistory={result.frontmatter.updateHistory}
-          readingTime={result.readingTime}
+          readingTime={result.readingTime}underline-offset-4
           language={serverLanguage}
        />
         {result.content}
@@ -81,7 +81,7 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
                   href={link.url}
                   target={link.url.startsWith('mailto') ? undefined : '_blank'}
                   rel="noopener noreferrer"
-                  className="transition-colors hover:underline"
+                  className="transition-colors hover:underline underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
@@ -101,14 +101,14 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
             <>
               <div className="flex items-center gap-2">
                 <a href={links[0].url}
-                  className="transition-colors hover:underline"
+                  className="transition-colors hover:underline underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >{links[0][serverLanguage]}</a>
                 <span className="opacity-40">•</span>
                 <a href={links[1].url} target="_blank" rel="noopener noreferrer"
-                  className="transition-colors hover:underline"
+                  className="transition-colors hover:underline underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
@@ -116,14 +116,14 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
               </div>
               <div className="flex items-center gap-2">
                 <a href={links[2].url} target="_blank" rel="noopener noreferrer"
-                  className="transition-colors hover:underline"
+                  className="transition-colors hover:underline underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >{links[2][serverLanguage]}</a>
                 <span className="opacity-40">•</span>
                 <a href={links[3].url} target="_blank" rel="noopener noreferrer"
-                  className="transition-colors hover:underline"
+                  className="transition-colors hover:underline underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
@@ -135,14 +135,14 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
             <>
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                 <a href={links[3].url}
-                  className="transition-colors hover:underline text-right"
+                  className="transition-colors hover:underline text-right underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >{links[3][serverLanguage]}</a>
                 <span className="opacity-40 text-center">•</span>
                 <a href={links[1].url} target="_blank" rel="noopener noreferrer"
-                  className="transition-colors hover:underline text-left"
+                  className="transition-colors hover:underline text-left underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
@@ -150,14 +150,14 @@ export function ContentWrapper({ result, language: serverLanguage }: ContentWrap
               </div>
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                 <a href={links[2].url} target="_blank" rel="noopener noreferrer"
-                  className="transition-colors hover:underline text-right"
+                  className="transition-colors hover:underline text-right underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}
                 >{links[2][serverLanguage]}</a>
                 <span className="opacity-40 text-center">•</span>
                 <a href={links[0].url} target="_blank" rel="noopener noreferrer"
-                  className="transition-colors hover:underline text-left"
+                  className="transition-colors hover:underline text-left underline-offset-6"
                   style={{ color: 'var(--text-muted)' }}
                   onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-main)'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; }}

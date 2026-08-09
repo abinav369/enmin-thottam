@@ -9,6 +9,9 @@
   --text-muted: #78716c;     /* warm gray */
   --text-bold: #b91c1c;      /* keep red */
   --border: #e2ddd8;         /* warm border */
+  --popup-border: rgba(51, 45, 45, 0.3);
+  --popup-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  --arrow-shadow: 2px 2px 4px rgba(0,0,0,0.15);
 }
 
 /* Dark mode colors */
@@ -19,6 +22,9 @@
   --text-muted: #94a3b8;
   --text-bold: #00ffff;
   --border: #27272a;
+  --popup-border: rgba(255, 255, 255, 0.3);
+  --popup-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+  --arrow-shadow: 2px 2px 4px rgba(255,255,255,0.08);
 }
 
 body {
@@ -56,7 +62,7 @@ body {
   }
 
   :root {
-    --content-size: 1.2rem;    /* Desktop md content font size */
+    --content-size: 1.1rem;    /* Desktop md content font size */
   }
 
   .prose h1.blog-title {

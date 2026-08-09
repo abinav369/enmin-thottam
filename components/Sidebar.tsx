@@ -534,7 +534,8 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         )}
         
         {/* CONTENT - Centered within parent box */}
-        <div 
+        <div
+          data-content-area="true" 
           className={`w-full max-w-7xl mx-auto md:p-10 px-7 transition-all duration-300
             ${isPending ? "opacity-30 pointer-events-none" : "opacity-100"}
           `}
