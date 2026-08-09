@@ -310,180 +310,174 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
     <div className="flex min-h-screen relative transition-colors" style={{ background: 'var(--bg-main)', color: 'var(--text-main)' }}>
       {/* SIDEBAR */}
       <aside
-        className={`transition-all duration-300 ease-in-out  fixed top-0 left-0 h-full border-r border-gray-800 overflow-y-auto z-40
-          ${open ? "w-80 p-4" : "w-0 p-0 overflow-hidden"}
-        `}
+        className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full border-r border-gray-800 z-40 overflow-x-hidden ${
+          open ? "w-[17.5rem] overflow-y-auto" : "w-0 overflow-y-hidden"
+        }`}
         style={{ 
-        //  background: '#121212', 
           background: '#000000',
           borderRight: '1px solid #27272a',
         }}
       >
-        {/* Close button */}
-        {open && (
-          <button
-            onClick={() => setOpen(false)}
-            className="cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 z-50 px-1.5 py-8 rounded-l-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-2.5 transition-all duration-300"
-            title={mounted ? t('closeSidebar') : 'Close sidebar'}
-            aria-label={mounted ? t('closeSidebar') : 'Close sidebar'}
-          >
-            ⟨
-          </button>
-        )}
-
-        {open && (
-          <>
-            <div className="mb-6 space-y-4">
+        {/* Close button (Transitions opacity instead of unmounting) */}
+        <button
+          onClick={() => setOpen(false)}
+          className={`cursor-pointer absolute top-1/2 right-0 -translate-y-1/2 z-50 px-1.5 py-8 rounded-l-xl bg-gray-800 text-white hover:bg-gray-700 hover:px-2.5 transition-all duration-300 ${
+            open ? 'opacity-100 delay-100' : 'opacity-0 pointer-events-none'
+          }`}
+          title={mounted ? t('closeSidebar') : 'Close sidebar'}
+          aria-label={mounted ? t('closeSidebar') : 'Close sidebar'}
+        >
+          ⟨
+        </button>
+        
+        {/* Inner Wrapper - Locks width to prevent squishing and handles padding safely */}
+        <div className="w-[17.5rem] min-w-[17.5rem] p-2 pt-5">
+          <div className="mb-6 space-y-4">
+            <Link
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigation("/");
+              }}
+              className="block text-5xl font-bold text-center cursor-pointer"
+              style={{ color: '#C4A484' }}
+            >
+              {language === 'ta' ? 'அன்பு' : 'Anbu'}
+            </Link>
+            
+            <div className="grid grid-cols-2 gap-2">
+              {/* Language button */}
+              <button
+                onClick={handleLanguageChange}
+                disabled={isPending}
+                data-sound="button"
+                className="cursor-pointer text-sm px-3 py-2 rounded-md font-medium flex items-center justify-center gap-2 
+                  transition-all duration-150 
+                  active:scale-95 active:translate-y-0.5
+                  disabled:cursor-not-allowed disabled:opacity-60"
+                style={{
+                  background: '#00dddd',
+                  color: '#000000',
+                  boxShadow: '0 4px 0 #008888, 0 4px 6px rgba(0,0,0,0.5)',
+                }}
+                onMouseDown={(e) => { e.currentTarget.style.boxShadow = langShadowPressed; e.currentTarget.style.transform = 'translateY(2px)'; }}
+                onMouseUp={(e) => { e.currentTarget.style.boxShadow = langShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = langShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
+                onTouchStart={(e) => { e.currentTarget.style.boxShadow = langShadowPressed; e.currentTarget.style.transform = 'translateY(2px)'; }}
+                onTouchEnd={(e) => { e.currentTarget.style.boxShadow = langShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                <Globe className="w-4 h-4" style={{ color: '#000000' }} />
+                <span style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
+              </button>
+              
+              {/* Theme button */}
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                data-sound="button"
+                className="cursor-pointer text-sm px-3 py-2 rounded-md font-medium flex items-center justify-center gap-2 
+                transition-all duration-150
+                lg:active:scale-95 lg:active:translate-y-0.5"
+                style={{
+                  background: '#1a2b3b',
+                  color: '#ffffff',
+                  boxShadow: themeShadow,
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.boxShadow = themeShadowPressed;
+                  e.currentTarget.style.transform = 'translateY(2px)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.boxShadow = themeShadow;
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = themeShadow;
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+                onTouchStart={(e) => { e.currentTarget.style.boxShadow = themeShadowPressed; e.currentTarget.style.transform = 'translateY(2px)'; }}
+                onTouchEnd={(e) => { e.currentTarget.style.boxShadow = themeShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              </button>
+            </div>
+              
+            <div className="my-4 h-px w-full bg-gradient-to-r from-transparent via-gray-500 to-transparent" />
+              
+            <div className="flex items-end justify-between">
+              <h2 className="text-2xl font-semibold" style={{ color: "#00FFFF" }}>
+                {language === 'ta' ? 'பொருளடக்கம்' : 'Contents'}
+              </h2>
+              
+              <button
+                onClick={allExpanded ? collapseAll : expandAll}
+                className="cursor-pointer text-sm px-2 py-2 text-gray-300 hover:text-white underline-offset-7 hover:underline transition-colors flex items-center gap-1"
+              >
+                <ChevronRight
+                  className={`w-4 h-4 transition-transform ${allExpanded ? 'rotate-90' : ''}`}
+                />
+                <span>
+                  {allExpanded
+                    ? (language === 'ta' ? 'மூடு' : 'Collapse')
+                    : (language === 'ta' ? 'விரி' : 'Expand')
+                  }
+                </span>
+              </button>
+            </div>
+          </div>
+                
+          <ul>
+            <li className="mb-4">
               <Link
                 href="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavigation("/");
-                }}
-                className="block text-5xl font-bold text-center cursor-pointer"
-                style={{ color: '#C4A484' }}
+                onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
+                className={`block text-lg ${pathname === "/" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
               >
-                {language === 'ta' ? 'அன்பு' : 'Anbu'}
+                {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
               </Link>
-              
-              <div className="grid grid-cols-2 gap-2">
+            </li>
+            <li className="mb-4">
+              <Link
+                href="/history"
+                onClick={(e) => { e.preventDefault(); handleNavigation("/history"); }}
+                className={`block text-lg ${pathname === "/history" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
+              >
+                {initialLanguage === 'ta' ? 'காலச்சுவடு' : 'Updates'}
+              </Link>
+            </li>
+            {data.map((cat) => {
+              const categoryDisplayName = cat.displayName?.[initialLanguage] || cat.category;
+              const isCategoryOpen = openCategories.has(cat.category);
 
-                {/* Language button */}
-                <button
-                  onClick={handleLanguageChange}
-                  disabled={isPending}
-                  data-sound="button"
-                  className="cursor-pointer text-sm px-3 py-2 rounded-md font-medium flex items-center justify-center gap-2 
-                    transition-all duration-150 
-                    active:scale-95 active:translate-y-0.5
-                    disabled:cursor-not-allowed disabled:opacity-60"
-                  style={{
-                    background: '#00dddd',
-                    color: '#000000',
-                    boxShadow: '0 4px 0 #008888, 0 4px 6px rgba(0,0,0,0.5)',
-                  }}
-                  onMouseDown={(e) => { e.currentTarget.style.boxShadow = langShadowPressed; e.currentTarget.style.transform = 'translateY(2px)'; }}
-                  onMouseUp={(e) => { e.currentTarget.style.boxShadow = langShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.boxShadow = langShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
-                  onTouchStart={(e) => { e.currentTarget.style.boxShadow = langShadowPressed; e.currentTarget.style.transform = 'translateY(2px)'; }}
-                  onTouchEnd={(e) => { e.currentTarget.style.boxShadow = langShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
-                >
-                  <Globe className="w-4 h-4" style={{ color: '#000000' }} />
-                  <span style={{ color: '#000000' }}>{language === 'ta' ? 'English' : 'தமிழ்'}</span>
-                </button>
-                
-                {/* Theme button */}
-                <button
-                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  data-sound="button"
-                  className="cursor-pointer text-sm px-3 py-2 rounded-md font-medium flex items-center justify-center gap-2 
-                  transition-all duration-150
-                  lg:active:scale-95 lg:active:translate-y-0.5"
-                  style={{
-                    background: '#1a2b3b',
-                    color: '#ffffff',
-                    boxShadow: themeShadow,
-                  }}
-                  onMouseDown={(e) => {
-                    e.currentTarget.style.boxShadow = themeShadowPressed;
-                    e.currentTarget.style.transform = 'translateY(2px)';
-                  }}
-                  onMouseUp={(e) => {
-                    e.currentTarget.style.boxShadow = themeShadow;
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = themeShadow;
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                  onTouchStart={(e) => { e.currentTarget.style.boxShadow = themeShadowPressed; e.currentTarget.style.transform = 'translateY(2px)'; }}
-                  onTouchEnd={(e) => { e.currentTarget.style.boxShadow = themeShadow; e.currentTarget.style.transform = 'translateY(0)'; }}
-                >
-                  {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                </button>
-              </div>
-
-              <div className="my-4 h-px w-full bg-linear-to-r from-transparent via-gray-500 to-transparent" />
-
-              <div className="flex items-end justify-between">
-                <h2 className="text-2xl font-semibold" style={{ color: "#00FFFF" }}>
-                  {language === 'ta' ? 'பொருளடக்கம்' : 'Contents'}
-                </h2>
- 
-                <button
-                  onClick={allExpanded ? collapseAll : expandAll}
-                  className="cursor-pointer text-sm px-2 py-2 text-gray-300 hover:text-white underline-offset-7 hover:underline transition-colors flex items-center gap-1"
-                >
-                  <ChevronRight
-                    className={`w-4 h-4 ${allExpanded ? 'rotate-90' : ''}`}
-                  />
-                  <span>
-                    {allExpanded
-                      ? (language === 'ta' ? 'மூடு' : 'Collapse')
-                      : (language === 'ta' ? 'விரி' : 'Expand')
-                    }
-                  </span>
-                </button>
-              </div>
-            </div>
-            
-            <ul>
-              <li className="mb-4">
-                <Link
-                  href="/"
-                  onClick={(e) => { e.preventDefault(); handleNavigation("/"); }}
-                  className={`block text-lg ${pathname === "/" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
-                >
-                  {initialLanguage === 'ta' ? 'அறிமுகம்' : 'Introduction'}
-                </Link>
-              </li>
-              <li className="mb-4">
-                <Link
-                  href="/history"
-                  onClick={(e) => { e.preventDefault(); handleNavigation("/history"); }}
-                  className={`block text-lg ${pathname === "/history" ? "text-[#C4A484] font-semibold" : "text-gray-300 hover:text-[#C4A488]"}`}
-                >
-                  {initialLanguage === 'ta' ? 'காலச்சுவடு' : 'Updates'}
-                </Link>
-              </li>
-              {data.map((cat) => {
-                const categoryDisplayName = cat.displayName?.[initialLanguage] || cat.category;
-
-                
-
-                const isCategoryOpen = openCategories.has(cat.category);
-                
-                return (
-                  <li key={cat.category} className="mb-2">
-                    <details open={isCategoryOpen}>
-                      <summary 
-                        className="cursor-pointer font-semibold text-gray-300 hover:text-[#00CCCC]"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleCategory(cat.category);
-                        }}
-                      >
-                        <span>
-                          {categoryDisplayName}
-                        </span>
-                      </summary>
-                      <RenderItems 
-                        items={cat.items} 
-                        basePath={`/${cat.category}`}
-                        pathname={pathname}
-                        openFolders={openFolders}
-                        toggleFolder={toggleFolder}
-                        initialLanguage={initialLanguage}
-                        mounted={mounted}
-                        onNavigate={handleNavigation}
-                      />
-                    </details>
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
+              return (
+                <li key={cat.category} className="mb-2">
+                  <details open={isCategoryOpen}>
+                    <summary 
+                      className="cursor-pointer font-semibold text-gray-300 hover:text-[#00CCCC]"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        toggleCategory(cat.category);
+                      }}
+                    >
+                      <span>
+                        {categoryDisplayName}
+                      </span>
+                    </summary>
+                    <RenderItems 
+                      items={cat.items} 
+                      basePath={`/${cat.category}`}
+                      pathname={pathname}
+                      openFolders={openFolders}
+                      toggleFolder={toggleFolder}
+                      initialLanguage={initialLanguage}
+                      mounted={mounted}
+                      onNavigate={handleNavigation}
+                    />
+                  </details>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </aside>
 
       {/* Open Button */}
