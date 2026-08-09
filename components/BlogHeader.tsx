@@ -64,7 +64,7 @@ export default function BlogHeader({
   return ( 
     <header className="mb-8 border-b border-(--border) pb-4">
       {/* ஓம் அம்மா */}
-      <p className="text-center text-base text-emerald-400 tracking-wide font-bold italic opacity-80 mt-3! md:mt-0! lg:mt-0!">
+      <p className="text-center text-base text-emerald-600 tracking-wide font-bold italic  mt-3! md:mt-0! lg:mt-0!">
         {aumAmma}
       </p>
       {/* Title */}
