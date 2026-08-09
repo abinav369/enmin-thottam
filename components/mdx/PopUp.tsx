@@ -24,32 +24,39 @@ export default function PopUp({ children, message }: Props) {
 
   useEffect(() => {
     if (!visible || !popupRef.current) return;
-      if (!popupRef.current) return;
-    
-      const rect = popupRef.current.getBoundingClientRect();
-    
-      const contentArea = document.querySelector('[data-content-area="true"]');
-      const containerRect = contentArea
-        ? contentArea.getBoundingClientRect()
-        : { left: 0, right: window.innerWidth };
-    
-      // Account for px-7 (28px) padding inside the container
+
+    const rect = popupRef.current.getBoundingClientRect();
+    const contentArea = document.querySelector('[data-content-area="true"]');
+    const containerRect = contentArea
+      ? contentArea.getBoundingClientRect()
+      : { left: 0, right: window.innerWidth };
+
+    let shift = 0;
+
+    if (isMobile) {
+      // Mobile: just clamp to viewport edges with 16px padding
+      if (rect.left < 16) {
+        shift = 16 - rect.left;
+      } else if (rect.right > window.innerWidth - 16) {
+        shift = window.innerWidth - 16 - rect.right;
+      }
+    } else {
+      // Desktop: clamp to content area with padding
       const contentPadding = 28;
       const extraBreathing = 8;
       const leftBound = containerRect.left + contentPadding + extraBreathing;
       const rightBound = containerRect.right - contentPadding - extraBreathing;
-    
-      let shift = 0;
-    
+
       if (rect.left < leftBound) {
         shift = leftBound - rect.left;
       } else if (rect.right > rightBound) {
         shift = rightBound - rect.right;
       }
-    
-      setHorizontalShift(shift);
-      setArrowShift(-shift);
-  }, [visible]);
+    }
+
+    setHorizontalShift(shift);
+    setArrowShift(-shift);
+  }, [visible, isMobile]);
 
   useEffect(() => {
     if (!visible) {
