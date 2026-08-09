@@ -311,7 +311,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
       {/* SIDEBAR */}
       <aside
         className={`transition-all duration-300 ease-in-out fixed top-0 left-0 h-full border-r border-gray-800 z-40 overflow-x-hidden ${
-          open ? "w-[18rem] overflow-y-auto" : "w-0 overflow-y-hidden"
+          open ? "w-[19rem] md:w-[18rem] overflow-y-auto" : "w-0 overflow-y-hidden"
         }`}
         style={{ 
           background: '#000000',
@@ -331,7 +331,7 @@ export default function Sidebar({ data, initialLanguage = 'ta', children }: Side
         </button>
         
         {/* Inner Wrapper - Locks width to prevent squishing and handles padding safely */}
-        <div className="w-[18rem] min-w-[17.5rem] p-2 pt-5">
+        <div className="w-[19rem] md:w-[18rem] p-2 pt-5">
           <div className="mb-6 space-y-4">
             <Link
               href="/"
