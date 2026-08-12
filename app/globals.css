@@ -137,6 +137,10 @@ main::-webkit-scrollbar-thumb:hover {
   font-size: var(--content-size); 
 }
 
+/* Allow MDX inline styles to override prose divs */
+.prose div[style] {
+  display: revert;
+}
 
 .prose h1 {
   font-size: 1.6em;     
@@ -202,12 +206,21 @@ main::-webkit-scrollbar-thumb:hover {
 }
 
 .prose a {
-  color: #60a5fa;
-  text-decoration: underline;
+  color: rgb(72, 132, 207);
 }
 
 .prose a:hover {
-  color: #93c5fd;
+  color: #808080;
+  text-decoration: underline;
+}
+
+:root:not(.dark) .prose a {
+  color: #004aea;
+}
+
+:root:not(.dark) .prose a:hover {
+  color: #808080;
+  text-decoration: underline;
 }
 
 .prose strong {

@@ -5,7 +5,8 @@ import remarkGfm from 'remark-gfm';
 import readingTime from "reading-time";
 import ThamizhVerse from "@/components/mdx/ThamizhVerse";
 import Quote from "@/components/mdx/QuoteBox";
-import PopUp from "@/components/mdx/PopUp"
+import PopUp from "@/components/mdx/PopUp";
+import Center from "@/components/mdx/Center";
 
 const contentsDir = path.join(process.cwd(), "contents");
 
@@ -223,7 +224,8 @@ export async function getFileContent(
         components: {
             ThamizhVerse,
             Quote,
-            PopUp
+            Pu : PopUp,
+            Center,
         },
         options: {
             parseFrontmatter: true,
