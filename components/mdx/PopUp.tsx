@@ -79,7 +79,7 @@ export default function PopUp({ children, message }: Props) {
   return (
     <span
       ref={triggerRef}
-      className="relative inline-block"
+      className="relative inline"
       onMouseEnter={() => setVisible(true)}
       onMouseLeave={() => setVisible(false)}
       onTouchStart={(e) => {
