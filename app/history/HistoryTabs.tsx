@@ -45,20 +45,31 @@ export default function HistoryTabs({ updatedEntries, publishedEntries, language
 
     if (language === 'ta') {
       if (seconds < 60) return `${toTamilNumerals(seconds.toString())} விநாடிகள் முன்பு`;
-      if (minutes < 60) return `${toTamilNumerals(minutes.toString())} நிமிடங்கள் முன்பு`;
+      if (minutes == 1) return `${toTamilNumerals(minutes.toString())} மணிதுளி முன்பு`;
+      if (minutes < 60) return `${toTamilNumerals(minutes.toString())} மணிதுளிகள் முன்பு`;
       if (hours < 24) return `${toTamilNumerals(hours.toString())} மணி நேரம் முன்பு`;
+      if (days == 1) return `${toTamilNumerals(days.toString())} நாள் முன்பு`;
       if (days < 7) return `${toTamilNumerals(days.toString())} நாட்கள் முன்பு`;
+      if (weeks == 1) return `${toTamilNumerals(weeks.toString())} வாரம் முன்பு`;
       if (weeks < 4) return `${toTamilNumerals(weeks.toString())} வாரங்கள் முன்பு`;
+      if (months == 1) return `${toTamilNumerals(months.toString())} மாதம் முன்பு`;
       if (months < 12) return `${toTamilNumerals(months.toString())} மாதங்கள் முன்பு`;
+      if (months == 1) return `${toTamilNumerals(years.toString())} ஆண்டு முன்பு`;
       return `${toTamilNumerals(years.toString())} ஆண்டுகள் முன்பு`;
     }
 
     if (seconds < 60) return `${seconds} seconds ago`;
+    if (minutes == 1) return `${minutes} minute ago`;
     if (minutes < 60) return `${minutes} minutes ago`;
+    if (hours == 1) return `${hours} hour ago`;
     if (hours < 24) return `${hours} hours ago`;
+    if (days == 1) return `${days} day ago`;
     if (days < 7) return `${days} days ago`;
+    if (weeks == 1) return `${weeks} week ago`;
     if (weeks < 4) return `${weeks} weeks ago`;
+    if (months < 1) return `${months} month ago`;
     if (months < 12) return `${months} months ago`;
+    if (months == 1) return `${years} year ago`;
     return `${years} years ago`;
   };
 
