@@ -52,7 +52,7 @@ body {
 }
 
 :root {
-  --content-size: 1rem;
+  --content-size: 1.05rem;
   --sidebar-width: 20rem;    /* mobile */
   /* --sidebar-font-size: 1rem */
 }
@@ -206,7 +206,8 @@ main::-webkit-scrollbar-thumb:hover {
 }
 
 .prose a {
-  color: rgb(72, 132, 207);
+  color: #00b6f9;
+  font-weight: 600;
 }
 
 .prose a:hover {
@@ -215,7 +216,8 @@ main::-webkit-scrollbar-thumb:hover {
 }
 
 :root:not(.dark) .prose a {
-  color: #004aea;
+  color: #0077bb;
+  font-weight: 600;
 }
 
 :root:not(.dark) .prose a:hover {
